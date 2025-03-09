@@ -22,10 +22,18 @@
   <FILE>Proyecto 1.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <MAIN_LOOP><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>22</LINE></MAIN_LOOP>
-  <DELAY_500MS><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>34</LINE></DELAY_500MS>
-  <OUTER_LOOP><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>37</LINE></OUTER_LOOP>
-  <MIDDLE_LOOP><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>39</LINE></MIDDLE_LOOP>
-  <INNER_LOOP><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>41</LINE></INNER_LOOP>
+  <START><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>20</LINE></START>
+  <DISPLAY><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>28</LINE></DISPLAY>
+  <U_SEG><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>35</LINE></U_SEG>
+  <D_SEG><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>36</LINE></D_SEG>
+  <U_MIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>37</LINE></U_MIN>
+  <D_MIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>38</LINE></D_MIN>
+  <U_HORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>39</LINE></U_HORA>
+  <D_HORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>40</LINE></D_HORA>
+  <MAIN_LOOP><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>82</LINE></MAIN_LOOP>
+  <DELAY_500MS><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>94</LINE></DELAY_500MS>
+  <OUTER_LOOP><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>97</LINE></OUTER_LOOP>
+  <MIDDLE_LOOP><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>99</LINE></MIDDLE_LOOP>
+  <INNER_LOOP><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>101</LINE></INNER_LOOP>
  </LABELS>
 </ASSEMBLER_INFO>
