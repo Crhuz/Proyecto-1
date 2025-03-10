@@ -28,7 +28,15 @@ START:
 DISPLAY: 
     .db 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F
 
-.dseg                 
+.def	COMP1 = R14
+.def	COMP2 = R15
+.def	MODO = R17
+.def	TIEMPO = R18
+.def	COUNTER = R19
+.def	SLIDER = R20
+
+.dseg    
+             
 .org SRAM_START         
 
 ; Definir variables en RAM
@@ -38,72 +46,336 @@ U_MIN:  .byte 1         ; Guardado en RAM (0x102)
 D_MIN:  .byte 1         ; Guardado en RAM (0x103)
 U_HORA: .byte 1         ; Guardado en RAM (0x104)
 D_HORA: .byte 1         ; Guardado en RAM (0x105)
+U_DIA: .byte 1         ; Guardado en RAM (0x106)
+D_DIA: .byte 1         ; Guardado en RAM (0x107)
+U_MES: .byte 1         ; Guardado en RAM (0x108)
+D_MES: .byte 1         ; Guardado en RAM (0x109)
+TIEMPOR: .byte 1         ; Guardado en RAM (0x110)
 
 .cseg                   ; Volver a la sección de código
 
-// SETUP
+CLI             // Quitar interrupciones para evitar problemas
+
+SETUP:
+	// Inicializando todas las variables de RAM
+	LDI     R16, 0 
+	STS     U_SEG, R16  ; Inicializar U_SEG en 0
+    STS     D_SEG, R16  ; Inicializar D_SEG en 0
+    STS     U_MIN, R16  ; Inicializar U_MIN en 0
+    STS     D_MIN, R16  ; Inicializar D_MIN en 0
+    STS     U_HORA, R16 ; Inicializar U_HORA en 0
+    STS     D_HORA, R16 ; Inicializar D_HORA en 0
+    STS     U_DIA, R16  ; Inicializar U_DIA en 0
+    STS     D_DIA, R16  ; Inicializar D_DIA en 0
+    STS     U_MES, R16  ; Inicializar U_MES en 0
+    STS     D_MES, R16  ; Inicializar D_MES en 0
+
+	//	Cargar valor inicial de la tabla
+	LDI     ZL, LOW(DISPLAY << 1)   ; Cargar el byte bajo de la dirección de la tabla
+    LDI     ZH, HIGH(DISPLAY << 1)  ; Cargar el byte alto de la dirección de la tabla
+
+	// CARGAR VALORES A REGISTROS
+
+    LDI     R16, 100
+	STS		TIEMPOR, R16
+
+	LDI		MODO, 0				// INICIAR EL VALOR DEL MODO EN 0
+	LDI		TIEMPO, 0			// INICIAR EL VALOR DE TIEMPO EN 0
+	LDI		R16, 0
+	MOV		COMP1, R16
+	MOV		COMP2, R16
+
+	// Habilitar interrupciones
+
+	LDI     R16, (1 << CLKPCE)
+	STS     CLKPR, R16
+    LDI     R16, 0b00000100
+    STS     CLKPR, R16
+
+    LDI     R16, (1<<CS01) | (1<<CS00)  
+    OUT     TCCR0B, R16
+	LDS		R16, TIEMPOR
+    OUT     TCNT0, R16
+
+    LDI     R16, (1<<TOIE0)
+    STS     TIMSK0, R16
+
+	LDI		R16, (1 << PCIE1) | (1 << PCIE0)	// Habilita interrupciones en PC y PB
+	STS		PCICR, R16
+
+	LDI		R16, (1 << PCINT8) | (1 << PCINT9) | (1 << PCINT10) // Habilita interrupciones en PC0 , PC1 , PC3
+	STS		PCMSK1, R16
+
+	LDI		R16, (1 << PCINT5)  // Habilita interrupciones en PB5
+	STS		PCMSK0, R16
+
 
 // DISPLAY
-LDI		R16, 0xFF
-OUT		DDRD, R16
-LDI		R16, 0x00
-OUT		PORTB, R16
+	LDI		R16, 0xFF
+	OUT		DDRD, R16
+	LDI		R16, 0x00
+	OUT		PORTB, R16
+
 
 // LED RGB
-SBI		DDRC, PC3
-CBI		PORTC, PC3
-SBI		DDRB, PC4
-CBI		PORTB, PC3
+	SBI		DDRC, PC3
+	CBI		PORTC, PC3
+	SBI		DDRB, PC4
+	CBI		PORTB, PC3
 
 // BOTONES
-CBI		DDRB, PB5 ; CAMBIO DE MODO
-SBI		PORTB, PB5 ; PULL-UP
-CBI		DDRC, PC0 ; SELECCIONADOR DE DISPLAYS
-SBI		PORTC, PC0 ; PULL-UP
-CBI		DDRC, PC1 ; AUMENTAR VALOR
-SBI		PORTC, PC1 ; PULL-UP
-CBI		DDRC, PC2 ; DISMINUIR VALOR
-SBI		PORTC, PC2 ; PULL-UP
+	CBI		DDRB, PB5 ; CAMBIO DE MODO
+	SBI		PORTB, PB5 ; PULL-UP
+	CBI		DDRC, PC0 ; SELECCIONADOR DE DISPLAYS
+	SBI		PORTC, PC0 ; PULL-UP
+	CBI		DDRC, PC1 ; AUMENTAR VALOR
+	SBI		PORTC, PC1 ; PULL-UP
+	CBI		DDRC, PC2 ; DISMINUIR VALOR
+	SBI		PORTC, PC2 ; PULL-UP
 
 // TRANSISTORES
-SBI		DDRB, PB0
-CBI		PORTB, PB0
-SBI		DDRB, PB2
-CBI		PORTB, PB2
-SBI		DDRB, PB3
-CBI		PORTB, PB3
-SBI		DDRB, PB4
-CBI		PORTB, PB4
+	SBI		DDRB, PB0
+	SBI		PORTB, PB0
+	SBI		DDRB, PB2
+	SBI		PORTB, PB2
+	SBI		DDRB, PB3
+	SBI		PORTB, PB3
+	SBI		DDRB, PB4
+	SBI		PORTB, PB4
 
 // LEDS SEPARADORES DE DISPLAY
-SBI		DDRB, PB1
-CBI		PORTB, PB1
+	SBI		DDRB, PB1
+	CBI		PORTB, PB1
+
+// BUZZER
+	SBI		DDRC, PC5
+	CBI		PORTC, PC5
+
+// INICIALIZAR DISPLAY
+	LPM		R16, Z
+	OUT		PORTD, R16
+
+SEI				// Habilitar interrupciones
 
 MAIN_LOOP:
-	SBI		PORTC, PC5
-	CALL	DELAY_500MS
-	CBI		PORTC, PC5
-	CALL	DELAY_500MS
-	SBI		PORTB, PB5
-	CALL	DELAY_500MS
-	CBI		PORTB, PB5
-	CALL	DELAY_500MS
+	SBRC	COMP1, 0
+	CALL	SU_MIN
+	SBRS	COMP1, 0
+	CALL	SD_MIN
+	SBRC	COMP1, 0
+	CALL	SU_HORA
+	SBRS	COMP1, 0
+	CALL	SD_HORA
+	CPI		TIEMPO, 50
+	BREQ	LEDC
+	CPI		TIEMPO, 100
+	BRNE	MAIN_LOOP
+	CBI		PORTB, PB1
+	CLR		TIEMPO
+	RJMP	AUMENTAR_VALOR
 	RJMP	MAIN_LOOP
 
+LEDC:
+	SBI	  PORTB, PB1
+	RJMP  MAIN_LOOP
 
-DELAY_500MS:
+RDISP:
+	LDI     ZL, LOW(DISPLAY << 1)   ; Cargar el byte bajo de la dirección de la tabla
+    LDI     ZH, HIGH(DISPLAY << 1)  ; Cargar el byte alto de la dirección de la tabla
+	RET
 
-    LDI     R18, 41      ; Cargar valor en R18 (ajustar según la frecuencia)
-OUTER_LOOP:
-    LDI     R19, 255     ; Cargar valor en R19
-MIDDLE_LOOP:
-    LDI     R20, 255     ; Cargar valor en R20
-INNER_LOOP:
-    DEC     R20          ; Decrementar R20
-    BRNE    INNER_LOOP   ; Saltar si R20 no es cero
-    DEC     R19          ; Decrementar R19
-    BRNE    MIDDLE_LOOP  ; Saltar si R19 no es cero
-    DEC     R18          ; Decrementar R18
-    BRNE    OUTER_LOOP   ; Saltar si R18 no es cero
-    RET                  ; Retornar de la función
+SU_MIN:
+	CBI		PORTB, PB0
+	CBI		PORTB, PB2
+	CBI		PORTB, PB3
+	CBI		PORTB, PB4
+	SBI		PORTB, PB0
+	LDS		R16, U_MIN
+	CALL	CAR_DISP
+	RET
+
+SD_MIN:
+	CBI		PORTB, PB0
+	CBI		PORTB, PB2
+	CBI		PORTB, PB3
+	CBI		PORTB, PB4
+	SBI		PORTB, PB2
+	LDS		R16, D_MIN
+	CALL	CAR_DISP
+	RET
+SU_HORA:
+	CBI		PORTB, PB0
+	CBI		PORTB, PB2
+	CBI		PORTB, PB3
+	CBI		PORTB, PB4
+	SBI		PORTB, PB3
+	LDS		R16, U_HORA
+	CALL	CAR_DISP
+	RET
+SD_HORA:
+	CBI		PORTB, PB0
+	CBI		PORTB, PB2
+	CBI		PORTB, PB3
+	CBI		PORTB, PB4
+	SBI		PORTB, PB4
+	LDS		R16, D_HORA
+	CALL	CAR_DISP
+	RET
+
+// CARGAR EL VALOR DEL DISPLAY
+CAR_DISP:
+	// Sumar la posición al registro Z
+    ADD     ZL, R16      ; Sumar la posición al byte bajo de Z
+    LDI     R16, 0       ; Cargar 0 en R16
+    ADC     ZH, R16      ; Sumar el acarreo al byte alto de Z (si hay desbordamiento)
+    // Cargar el valor de la tabla en R16 usando LPM
+    LPM     R16, Z       ; Cargar el valor de la tabla en R16
+    // Enviar el valor al display (PORTB)
+    OUT     PORTD, R16   ; Mostrar el valor en el display
+	CALL	RDISP
+	RET
+
+// AUMENTAR EL VALOR DE LA CUENTA
+AUMENTAR_VALOR:
+    LDS     R16, U_SEG      
+    CPI     R16, 10         
+    BREQ    RUSEG           
+    INC     R16             
+    STS     U_SEG, R16      
+    RJMP    MAIN_LOOP       
+
+RUSEG:
+    CLR     R16             
+    STS     U_SEG, R16      
+    LDS     R16, D_SEG      
+    CPI     R16, 5          
+    BREQ    RDSEG           
+    INC     R16             
+    STS     D_SEG, R16      
+    RJMP    MAIN_LOOP       
+
+RDSEG:
+    CLR     R16             
+    STS     D_SEG, R16      
+    LDS     R16, U_MIN      
+    CPI     R16, 10         
+    BREQ    RUMIN           
+    INC     R16             
+    STS     U_MIN, R16      
+    RJMP    MAIN_LOOP       
+
+RUMIN:
+    CLR     R16             
+    STS     U_MIN, R16      
+    LDS     R16, D_MIN      
+    CPI     R16, 5          
+    BREQ    RDMIN           
+    INC     R16             
+    STS     D_MIN, R16      
+    RJMP    MAIN_LOOP       
+
+RDMIN:
+    CLR     R16             
+    STS     D_MIN, R16      
+    LDS     R16, D_HORA     
+    CPI     R16, 2          
+    BREQ    RRAPIDO         
+    LDS     R16, U_HORA     
+    CPI     R16, 10         
+    BREQ    RUHORA          
+    INC     R16             
+    STS     U_HORA, R16     
+    RJMP    MAIN_LOOP       
+
+RRAPIDO:
+    LDS     R16, U_HORA     
+    CPI     R16, 4          
+    BREQ    RDHORA          
+    INC     R16             
+    STS     U_HORA, R16     
+    RJMP    MAIN_LOOP       
+
+RUHORA:
+    CLR     R16             
+    STS     U_HORA, R16     
+    LDS     R16, D_HORA     
+    INC     R16             
+    STS     D_HORA, R16     
+    RJMP    MAIN_LOOP       
+
+RDHORA:
+    CLR     R16             
+    STS     D_HORA, R16 
+	STS     U_HORA, R16     
+    RJMP    MAIN_LOOP       
+
+// PENDIENTE
+	//STS		U_DIA, R16
+	//CPI		R16, 10
+	//BREQ	RDHORA
+	//INC		R16
+	//LDS		R16, D_HORA
+	//RJMP	MAIN_LOOP
+
+
+
+// SE ACTIVA CON UN OVERFLOW
+TMR0_ISR:
+	INC		COMP1
+	INC		COMP2
+	LDS		SLIDER, TIEMPOR
+    OUT     TCNT0, SLIDER
+    INC     TIEMPO
+    RETI
+
+// SE ACTIVA AL PRECIONAR UN BOTON
+PCINT_ISR:
+	// PENDIENTE
+	//SBIS    PINB, PB5   
+    //RJMP    CAMBIO      
+    //SBIS    PINC, PC1   
+    //RJMP    BOTON1
+	//SBIS    PINC, PC0   
+    //RJMP    BOTON2      
+    //SBIS    PINC, PC3   
+    //RJMP    BOTON3   
+    RETI                
+
+//CAMBIO:
+//	INC		MODO				;CAMBIO DE MODO
+//	CPI		MODO, 5
+//	BREQ	REINICIO
+//	RETI
+//
+//REINICIO:
+//	CLR		MODO				; Si modo llego a 5 se reincia a 5
+//	RETI
+//
+//BOTON1:							;Funcionamiento para boton 1
+//	CPI		MODO, 1				;Se activa si estamos en modo config hora
+//	BREQ	SUMA_HORA
+//	CPI		MODO, 3				;Se activa si estamos en modo config fecha
+//	BREQ	SUMA_FECHA
+//	CPI		MODO, 4
+//	BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
+//	RETI
+//
+//BOTON2:
+//	CPI		MODO, 1
+//	BREQ	RESTA_HORA			;Se activa si estamos en modo config hora
+//	CPI		MODO, 3
+//	BREQ	RESTA_FECHA			;Se activa si estamos en modo config fecha
+//	CPI		MODO, 4
+//	BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
+//	RETI
+//
+//BOTON3:
+//	CPI		MODO, 1
+//	BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config hora
+//	CPI		MODO, 3
+//	BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config fecha
+//	CPI		MODO, 4
+//	BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
+//	RETI
+
 
