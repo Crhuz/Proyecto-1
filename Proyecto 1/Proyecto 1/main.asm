@@ -11,12 +11,16 @@
 .org 0x0000             
     JMP     START       
 
-.org PCI0addr           ; Vector de interrupción de PCINT
 .org PCI1addr           ; Vector de interrupción de PCINT
     JMP     PCINT_ISR   ; Saltar a la rutina de interrupción de PCINT
 
+.org OVF2addr           ; Vector de interrupción por overflow del Timer2
+    JMP     TMR2_ISR    ; Saltar a la rutina de interrupción del Timer2
+
 .org OVF0addr           ; Vector de interrupción por overflow del Timer0
     JMP     TMR0_ISR    ; Saltar a la rutina de interrupción del Timer0
+
+
 
 START:
     ; Configuración de la pila
@@ -34,6 +38,7 @@ DISPLAY:
 .def	COUNTER = R19
 .def	SLIDER = R20
 .def	CAMBIADOR = R21
+.def	CALEDS = R22
 .dseg    
              
 .org SRAM_START         
@@ -92,21 +97,26 @@ SETUP:
     LDI     R16, 0b00000100
     STS     CLKPR, R16
 
-    LDI     R16, (1<<CS00) | (1<<CS00)  
+    LDI     R16, (1<<CS00) | (1<<CS01)  
     OUT     TCCR0B, R16
 	LDS		R16, TIEMPOR
     OUT     TCNT0, R16
 
-    LDI     R16, (1<<TOIE0)
+	LDI     R16, (1<<CS21) 
+    STS     TCCR2B, R16
+	LDS		R16, TIEMPOR
+    STS     TCNT2, R16
+
+	LDI     R16, (1<<TOIE0)
     STS     TIMSK0, R16
 
-	LDI		R16, (1 << PCIE1) | (1 << PCIE0)	// Habilita interrupciones en PC y PB
+    LDI     R16, (1<<TOIE2)
+    STS     TIMSK2, R16
+
+	LDI		R16, (1 << PCIE1)	// Habilita interrupciones en PC 
 	STS		PCICR, R16
 
-	LDI		R16, (1 << PCINT5)  // Habilita interrupciones en PB5
-	STS		PCMSK0, R16
-
-	LDI		R16, (1 << PCINT8) | (1 << PCINT9) | (1 << PCINT10) // Habilita interrupciones en PC0 , PC1 , PC3
+	LDI		R16, (1 << PCINT8) | (1 << PCINT9) | (1 << PCINT10) | (1 << PCINT11) // Habilita interrupciones en PC0 , PC1 , PC2 ,PC3
 	STS		PCMSK1, R16
 
 // DISPLAY
@@ -117,20 +127,20 @@ SETUP:
 
 
 // LED RGB
-	SBI		DDRC, PC3
-	CBI		PORTC, PC3
 	SBI		DDRC, PC4
 	CBI		PORTC, PC4
+	SBI		DDRC, PC5
+	CBI		PORTC, PC5
 
 // BOTONES
-	CBI		DDRB, PB5 ; CAMBIO DE MODO
-	SBI		PORTB, PB5 ; PULL-UP
-	CBI		DDRC, PC0 ; SELECCIONADOR DE DISPLAYS
+	CBI		DDRC, PC0 ; AUMENTAR VALOR
 	SBI		PORTC, PC0 ; PULL-UP
-	CBI		DDRC, PC1 ; AUMENTAR VALOR
+	CBI		DDRC, PC1 ; DISMINUIR VALOR
 	SBI		PORTC, PC1 ; PULL-UP
-	CBI		DDRC, PC2 ; DISMINUIR VALOR
+	CBI		DDRC, PC2 ; SELECCIONADOR DE DISPLAYS
 	SBI		PORTC, PC2 ; PULL-UP
+	CBI		DDRC, PC3 ; CAMBIO DE MODO
+	SBI		PORTC, PC3 ; PULL-UP
 
 // TRANSISTORES
 	SBI		DDRB, PB0
@@ -147,8 +157,8 @@ SETUP:
 	CBI		PORTB, PB1
 
 // BUZZER
-	SBI		DDRC, PC5
-	CBI		PORTC, PC5
+	SBI		DDRB, PB5
+	CBI		PORTB, PB5
 
 // INICIALIZAR DISPLAY
 	LPM		R16, Z
@@ -157,10 +167,10 @@ SETUP:
 SEI				// Habilitar interrupciones
 
 MAIN_LOOP:
-	CPI		TIEMPO, 50
+	CPI		CALEDS, 125
 	BREQ	LEDC1
 LED1:
-	CPI		TIEMPO, 100
+	CPI		CALEDS, 250
 	BREQ	LEDC2
 LED2:
 	CPI		MODO, 0
@@ -190,7 +200,7 @@ SD_HORA:
 	
 HORA_MIN:
 	CBI		PORTC, PC4
-	SBI		PORTC, PC3
+	SBI		PORTC, PC5
 	LDI		SLIDER, 0 
 CER:
 	CPI		CAMBIADOR, 0
@@ -219,7 +229,7 @@ SETHORA:
 
 FECHA:
 	SBI		PORTC, PC4
-	CBI		PORTC, PC3
+	CBI		PORTC, PC5
 	LDI		SLIDER, 1
 	RJMP	CER
 
@@ -227,7 +237,7 @@ SETFECHA:
 	RJMP	MAIN_LOOP
 
 ALARMA: 
-	SBI		PORTC, PC3
+	SBI		PORTC, PC5
 	RJMP	MAIN_LOOP
 
 REINI:
@@ -372,35 +382,39 @@ RDHORA:
     STS     D_HORA, R16 
 	STS     U_HORA, R16     
     RJMP    MAIN_LOOP       
-
-// PENDIENTE
-	//STS		U_DIA, R16
-	//CPI		R16, 10
-	//BREQ		RDHORA
-	//INC		R16
-	//LDS		R16, D_HORA
-	//RJMP		MAIN_LOOP
+	LDS		R16, U_DIA
+	CPI		R16, 10
+	BREQ	RDHORA
+	INC		R16
+	STS		D_HORA, R16
+	RJMP	MAIN_LOOP
 
 
 
 // SE ACTIVA CON UN OVERFLOW
 TMR0_ISR:
-	INC		CAMBIADOR
 	LDS		R16, TIEMPOR
     OUT     TCNT0, R16
     INC     TIEMPO
     RETI
 
+TMR2_ISR:
+	INC		CAMBIADOR
+	INC		CALEDS
+	LDS		R16, TIEMPOR
+	STS     TCNT2, R16
+	RETI
+
 // SE ACTIVA AL PRECIONAR UN BOTON
 PCINT_ISR:
-	SBIS    PINC, PC2   
+	SBIS    PINC, PC3   
     RJMP    CAMBIO      
-    SBIS    PINC, PC1   
-    RJMP    BOTON1
-	SBIS    PINC, PC0   
+    SBIS    PINC, PC2   
+    RJMP    BOTON3
+	SBIS    PINC, PC1   
     RJMP    BOTON2      
-    SBIS    PINB, PB5   
-    RJMP    BOTON3   
+    SBIS    PINC, PC0   
+    RJMP    BOTON1   
     RETI                
 
 CAMBIO:

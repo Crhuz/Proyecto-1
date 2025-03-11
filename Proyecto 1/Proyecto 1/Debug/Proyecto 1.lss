@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm Tue Mar 11 14:09:58 2025
+AVRASM ver. 2.2.8  C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm Tue Mar 11 15:52:07 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(8): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
@@ -1042,12 +1042,16 @@ C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(8): Inc
                                  .org 0x0000             
 000000 940c 0022                     JMP     START       
                                  
-                                 .org PCI0addr           ; Vector de interrupción de PCINT
                                  .org PCI1addr           ; Vector de interrupción de PCINT
-000008 940c 0147                     JMP     PCINT_ISR   ; Saltar a la rutina de interrupción de PCINT
+000008 940c 015c                     JMP     PCINT_ISR   ; Saltar a la rutina de interrupción de PCINT
+                                 
+                                 .org OVF2addr           ; Vector de interrupción por overflow del Timer2
+000012 940c 0155                     JMP     TMR2_ISR    ; Saltar a la rutina de interrupción del Timer2
                                  
                                  .org OVF0addr           ; Vector de interrupción por overflow del Timer0
-000020 940c 0141                     JMP     TMR0_ISR    ; Saltar a la rutina de interrupción del Timer0
+000020 940c 0150                     JMP     TMR0_ISR    ; Saltar a la rutina de interrupción del Timer0
+                                 
+                                 
                                  
                                  START:
                                      ; Configuración de la pila
@@ -1069,6 +1073,7 @@ C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(8): Inc
                                  .def	COUNTER = R19
                                  .def	SLIDER = R20
                                  .def	CAMBIADOR = R21
+                                 .def	CALEDS = R22
                                  .dseg    
                                               
                                  .org SRAM_START         
@@ -1127,326 +1132,335 @@ C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(8): Inc
 00004d e004                          LDI     R16, 0b00000100
 00004e 9300 0061                     STS     CLKPR, R16
                                  
-000050 e001                          LDI     R16, (1<<CS00) | (1<<CS00)  
+000050 e003                          LDI     R16, (1<<CS00) | (1<<CS01)  
 000051 bd05                          OUT     TCCR0B, R16
 000052 9100 010a                 	LDS		R16, TIEMPOR
 000054 bd06                          OUT     TCNT0, R16
                                  
-000055 e001                          LDI     R16, (1<<TOIE0)
-000056 9300 006e                     STS     TIMSK0, R16
+000055 e002                      	LDI     R16, (1<<CS21) 
+000056 9300 00b1                     STS     TCCR2B, R16
+000058 9100 010a                 	LDS		R16, TIEMPOR
+00005a 9300 00b2                     STS     TCNT2, R16
                                  
-000058 e003                      	LDI		R16, (1 << PCIE1) | (1 << PCIE0)	// Habilita interrupciones en PC y PB
-000059 9300 0068                 	STS		PCICR, R16
+00005c e001                      	LDI     R16, (1<<TOIE0)
+00005d 9300 006e                     STS     TIMSK0, R16
                                  
-00005b e200                      	LDI		R16, (1 << PCINT5)  // Habilita interrupciones en PB5
-00005c 9300 006b                 	STS		PCMSK0, R16
+00005f e001                          LDI     R16, (1<<TOIE2)
+000060 9300 0070                     STS     TIMSK2, R16
                                  
-00005e e007                      	LDI		R16, (1 << PCINT8) | (1 << PCINT9) | (1 << PCINT10) // Habilita interrupciones en PC0 , PC1 , PC3
-00005f 9300 006c                 	STS		PCMSK1, R16
+000062 e002                      	LDI		R16, (1 << PCIE1)	// Habilita interrupciones en PC 
+000063 9300 0068                 	STS		PCICR, R16
+                                 
+000065 e00f                      	LDI		R16, (1 << PCINT8) | (1 << PCINT9) | (1 << PCINT10) | (1 << PCINT11) // Habilita interrupciones en PC0 , PC1 , PC2 ,PC3
+000066 9300 006c                 	STS		PCMSK1, R16
                                  
                                  // DISPLAY
-000061 ef0f                      	LDI		R16, 0xFF
-000062 b90a                      	OUT		DDRD, R16
-000063 e000                      	LDI		R16, 0x00
-000064 b90b                      	OUT		PORTD, R16
+000068 ef0f                      	LDI		R16, 0xFF
+000069 b90a                      	OUT		DDRD, R16
+00006a e000                      	LDI		R16, 0x00
+00006b b90b                      	OUT		PORTD, R16
                                  
                                  
                                  // LED RGB
-000065 9a3b                      	SBI		DDRC, PC3
-000066 9843                      	CBI		PORTC, PC3
-000067 9a3c                      	SBI		DDRC, PC4
-000068 9844                      	CBI		PORTC, PC4
+00006c 9a3c                      	SBI		DDRC, PC4
+00006d 9844                      	CBI		PORTC, PC4
+00006e 9a3d                      	SBI		DDRC, PC5
+00006f 9845                      	CBI		PORTC, PC5
                                  
                                  // BOTONES
-000069 9825                      	CBI		DDRB, PB5 ; CAMBIO DE MODO
-00006a 9a2d                      	SBI		PORTB, PB5 ; PULL-UP
-00006b 9838                      	CBI		DDRC, PC0 ; SELECCIONADOR DE DISPLAYS
-00006c 9a40                      	SBI		PORTC, PC0 ; PULL-UP
-00006d 9839                      	CBI		DDRC, PC1 ; AUMENTAR VALOR
-00006e 9a41                      	SBI		PORTC, PC1 ; PULL-UP
-00006f 983a                      	CBI		DDRC, PC2 ; DISMINUIR VALOR
-000070 9a42                      	SBI		PORTC, PC2 ; PULL-UP
+000070 9838                      	CBI		DDRC, PC0 ; AUMENTAR VALOR
+000071 9a40                      	SBI		PORTC, PC0 ; PULL-UP
+000072 9839                      	CBI		DDRC, PC1 ; DISMINUIR VALOR
+000073 9a41                      	SBI		PORTC, PC1 ; PULL-UP
+000074 983a                      	CBI		DDRC, PC2 ; SELECCIONADOR DE DISPLAYS
+000075 9a42                      	SBI		PORTC, PC2 ; PULL-UP
+000076 983b                      	CBI		DDRC, PC3 ; CAMBIO DE MODO
+000077 9a43                      	SBI		PORTC, PC3 ; PULL-UP
                                  
                                  // TRANSISTORES
-000071 9a20                      	SBI		DDRB, PB0
-000072 9a28                      	SBI		PORTB, PB0
-000073 9a22                      	SBI		DDRB, PB2
-000074 9a2a                      	SBI		PORTB, PB2
-000075 9a23                      	SBI		DDRB, PB3
-000076 9a2b                      	SBI		PORTB, PB3
-000077 9a24                      	SBI		DDRB, PB4
-000078 9a2c                      	SBI		PORTB, PB4
+000078 9a20                      	SBI		DDRB, PB0
+000079 9a28                      	SBI		PORTB, PB0
+00007a 9a22                      	SBI		DDRB, PB2
+00007b 9a2a                      	SBI		PORTB, PB2
+00007c 9a23                      	SBI		DDRB, PB3
+00007d 9a2b                      	SBI		PORTB, PB3
+00007e 9a24                      	SBI		DDRB, PB4
+00007f 9a2c                      	SBI		PORTB, PB4
                                  
                                  // LEDS SEPARADORES DE DISPLAY
-000079 9a21                      	SBI		DDRB, PB1
-00007a 9829                      	CBI		PORTB, PB1
+000080 9a21                      	SBI		DDRB, PB1
+000081 9829                      	CBI		PORTB, PB1
                                  
                                  // BUZZER
-00007b 9a3d                      	SBI		DDRC, PC5
-00007c 9845                      	CBI		PORTC, PC5
+000082 9a25                      	SBI		DDRB, PB5
+000083 982d                      	CBI		PORTB, PB5
                                  
                                  // INICIALIZAR DISPLAY
-00007d 9104                      	LPM		R16, Z
-00007e b90b                      	OUT		PORTD, R16
+000084 9104                      	LPM		R16, Z
+000085 b90b                      	OUT		PORTD, R16
                                  
-00007f 9478                      SEI				// Habilitar interrupciones
+000086 9478                      SEI				// Habilitar interrupciones
                                  
                                  MAIN_LOOP:
-000080 3322                      	CPI		TIEMPO, 50
-000081 f1b9                      	BREQ	LEDC1
+000087 376d                      	CPI		CALEDS, 125
+000088 f1b9                      	BREQ	LEDC1
                                  LED1:
-000082 3624                      	CPI		TIEMPO, 100
-000083 f1b9                      	BREQ	LEDC2
+000089 3f6a                      	CPI		CALEDS, 250
+00008a f1b9                      	BREQ	LEDC2
                                  LED2:
-000084 3010                      	CPI		MODO, 0
-000085 f0b9                      	BREQ	HORA_MIN
-000086 3011                      	CPI		MODO, 1
-000087 f139                      	BREQ	SETHORA
-000088 3012                      	CPI		MODO, 2
-000089 f131                      	BREQ	FECHA
-00008a 3013                      	CPI		MODO, 3
-00008b f141                      	BREQ	SETFECHA
-00008c 3014                      	CPI		MODO, 4
-00008d f139                      	BREQ	ALARMA
-00008e cff1                      	RJMP    MAIN_LOOP
+00008b 3010                      	CPI		MODO, 0
+00008c f0b9                      	BREQ	HORA_MIN
+00008d 3011                      	CPI		MODO, 1
+00008e f139                      	BREQ	SETHORA
+00008f 3012                      	CPI		MODO, 2
+000090 f131                      	BREQ	FECHA
+000091 3013                      	CPI		MODO, 3
+000092 f141                      	BREQ	SETFECHA
+000093 3014                      	CPI		MODO, 4
+000094 f139                      	BREQ	ALARMA
+000095 cff1                      	RJMP    MAIN_LOOP
                                  
                                  SD_HORA:
-00008f 9828                      	CBI		PORTB, PB0
-000090 982a                      	CBI		PORTB, PB2
-000091 982b                      	CBI		PORTB, PB3
-000092 982c                      	CBI		PORTB, PB4
-000093 9a2c                      	SBI		PORTB, PB4
-000094 ff40                      	SBRS	SLIDER, 0
-000095 9100 0105                 	LDS		R16, D_HORA
-000097 fd40                      	SBRC	SLIDER, 0
-000098 9100 0107                 	LDS		R16, D_DIA
-00009a 940e 00ea                 	CALL	CAR_DISP
-00009c c00b                      	RJMP	CUAR
+000096 9828                      	CBI		PORTB, PB0
+000097 982a                      	CBI		PORTB, PB2
+000098 982b                      	CBI		PORTB, PB3
+000099 982c                      	CBI		PORTB, PB4
+00009a 9a2c                      	SBI		PORTB, PB4
+00009b ff40                      	SBRS	SLIDER, 0
+00009c 9100 0105                 	LDS		R16, D_HORA
+00009e fd40                      	SBRC	SLIDER, 0
+00009f 9100 0107                 	LDS		R16, D_DIA
+0000a1 940e 00f1                 	CALL	CAR_DISP
+0000a3 c00b                      	RJMP	CUAR
                                  	
                                  HORA_MIN:
-00009d 9844                      	CBI		PORTC, PC4
-00009e 9a43                      	SBI		PORTC, PC3
-00009f e040                      	LDI		SLIDER, 0 
+0000a4 9844                      	CBI		PORTC, PC4
+0000a5 9a45                      	SBI		PORTC, PC5
+0000a6 e040                      	LDI		SLIDER, 0 
                                  CER:
-0000a0 3050                      	CPI		CAMBIADOR, 0
-0000a1 f0f1                      	BREQ	SU_MIN
+0000a7 3050                      	CPI		CAMBIADOR, 0
+0000a8 f0f1                      	BREQ	SU_MIN
                                  PRI:
-0000a2 3051                      	CPI		CAMBIADOR, 1
-0000a3 f151                      	BREQ	SD_MIN
+0000a9 3051                      	CPI		CAMBIADOR, 1
+0000aa f151                      	BREQ	SD_MIN
                                  SEG:
-0000a4 3052                      	CPI		CAMBIADOR, 2
-0000a5 f1b1                      	BREQ	SU_HORA
+0000ab 3052                      	CPI		CAMBIADOR, 2
+0000ac f1b1                      	BREQ	SU_HORA
                                  TER:
-0000a6 3053                      	CPI		CAMBIADOR, 3
-0000a7 f339                      	BREQ	SD_HORA
+0000ad 3053                      	CPI		CAMBIADOR, 3
+0000ae f339                      	BREQ	SD_HORA
                                  CUAR:
-0000a8 3054                      	CPI		CAMBIADOR, 4
-0000a9 f069                      	BREQ	REINI
+0000af 3054                      	CPI		CAMBIADOR, 4
+0000b0 f069                      	BREQ	REINI
                                  CINC:
-0000aa 3624                      	CPI		TIEMPO, 100
-0000ab f6a1                      	BRNE	MAIN_LOOP
-0000ac 2722                      	CLR		TIEMPO
-0000ad c044                      	RJMP	AUMENTAR_VALOR
-0000ae cfd1                      	RJMP	MAIN_LOOP
+0000b1 3624                      	CPI		TIEMPO, 100
+0000b2 f6a1                      	BRNE	MAIN_LOOP
+0000b3 2722                      	CLR		TIEMPO
+0000b4 c044                      	RJMP	AUMENTAR_VALOR
+0000b5 cfd1                      	RJMP	MAIN_LOOP
                                  
                                  SETHORA:
-0000af cfd0                      	RJMP	MAIN_LOOP
+0000b6 cfd0                      	RJMP	MAIN_LOOP
                                  
                                  FECHA:
-0000b0 9a44                      	SBI		PORTC, PC4
-0000b1 9843                      	CBI		PORTC, PC3
-0000b2 e041                      	LDI		SLIDER, 1
-0000b3 cfec                      	RJMP	CER
+0000b7 9a44                      	SBI		PORTC, PC4
+0000b8 9845                      	CBI		PORTC, PC5
+0000b9 e041                      	LDI		SLIDER, 1
+0000ba cfec                      	RJMP	CER
                                  
                                  SETFECHA:
-0000b4 cfcb                      	RJMP	MAIN_LOOP
+0000bb cfcb                      	RJMP	MAIN_LOOP
                                  
                                  ALARMA: 
-0000b5 9a43                      	SBI		PORTC, PC3
-0000b6 cfc9                      	RJMP	MAIN_LOOP
+0000bc 9a45                      	SBI		PORTC, PC5
+0000bd cfc9                      	RJMP	MAIN_LOOP
                                  
                                  REINI:
-0000b7 e050                      	LDI		CAMBIADOR, 0
-0000b8 cff1                      	RJMP	CINC
+0000be e050                      	LDI		CAMBIADOR, 0
+0000bf cff1                      	RJMP	CINC
                                  
                                  LEDC1:
-0000b9 9a29                      	SBI		PORTB, PB1
-0000ba cfc7                      	RJMP	LED1
+0000c0 9a29                      	SBI		PORTB, PB1
+0000c1 cfc7                      	RJMP	LED1
                                  
                                  LEDC2:
-0000bb 9829                      	CBI		PORTB, PB1
-0000bc cfc7                      	RJMP	LED2
+0000c2 9829                      	CBI		PORTB, PB1
+0000c3 cfc7                      	RJMP	LED2
                                  
                                  RDISP:
-0000bd e4ec                      	LDI     ZL, LOW(DISPLAY << 1)   ; Cargar el byte bajo de la dirección de la tabla
-0000be e0f0                          LDI     ZH, HIGH(DISPLAY << 1)  ; Cargar el byte alto de la dirección de la tabla
-0000bf 9508                      	RET
+0000c4 e4ec                      	LDI     ZL, LOW(DISPLAY << 1)   ; Cargar el byte bajo de la dirección de la tabla
+0000c5 e0f0                          LDI     ZH, HIGH(DISPLAY << 1)  ; Cargar el byte alto de la dirección de la tabla
+0000c6 9508                      	RET
                                  
                                  SU_MIN:
-0000c0 9828                      	CBI		PORTB, PB0
-0000c1 982a                      	CBI		PORTB, PB2
-0000c2 982b                      	CBI		PORTB, PB3
-0000c3 982c                      	CBI		PORTB, PB4
-0000c4 9a28                      	SBI		PORTB, PB0
-0000c5 ff40                      	SBRS	SLIDER, 0
-0000c6 9100 0102                 	LDS		R16, U_MIN
-0000c8 fd40                      	SBRC	SLIDER, 0
-0000c9 9100 0108                 	LDS		R16, U_MES
-0000cb 940e 00ea                 	CALL	CAR_DISP
-0000cd cfd4                      	RJMP	PRI
+0000c7 9828                      	CBI		PORTB, PB0
+0000c8 982a                      	CBI		PORTB, PB2
+0000c9 982b                      	CBI		PORTB, PB3
+0000ca 982c                      	CBI		PORTB, PB4
+0000cb 9a28                      	SBI		PORTB, PB0
+0000cc ff40                      	SBRS	SLIDER, 0
+0000cd 9100 0102                 	LDS		R16, U_MIN
+0000cf fd40                      	SBRC	SLIDER, 0
+0000d0 9100 0108                 	LDS		R16, U_MES
+0000d2 940e 00f1                 	CALL	CAR_DISP
+0000d4 cfd4                      	RJMP	PRI
                                  
                                  SD_MIN:
-0000ce 9828                      	CBI		PORTB, PB0
-0000cf 982a                      	CBI		PORTB, PB2
-0000d0 982b                      	CBI		PORTB, PB3
-0000d1 982c                      	CBI		PORTB, PB4
-0000d2 9a2a                      	SBI		PORTB, PB2
-0000d3 ff40                      	SBRS	SLIDER, 0
-0000d4 9100 0103                 	LDS		R16, D_MIN
-0000d6 fd40                      	SBRC	SLIDER, 0
-0000d7 9100 0109                 	LDS		R16, D_MES
-0000d9 940e 00ea                 	CALL	CAR_DISP
-0000db cfc8                      	RJMP	SEG
+0000d5 9828                      	CBI		PORTB, PB0
+0000d6 982a                      	CBI		PORTB, PB2
+0000d7 982b                      	CBI		PORTB, PB3
+0000d8 982c                      	CBI		PORTB, PB4
+0000d9 9a2a                      	SBI		PORTB, PB2
+0000da ff40                      	SBRS	SLIDER, 0
+0000db 9100 0103                 	LDS		R16, D_MIN
+0000dd fd40                      	SBRC	SLIDER, 0
+0000de 9100 0109                 	LDS		R16, D_MES
+0000e0 940e 00f1                 	CALL	CAR_DISP
+0000e2 cfc8                      	RJMP	SEG
                                  SU_HORA:
-0000dc 9828                      	CBI		PORTB, PB0
-0000dd 982a                      	CBI		PORTB, PB2
-0000de 982b                      	CBI		PORTB, PB3
-0000df 982c                      	CBI		PORTB, PB4
-0000e0 9a2b                      	SBI		PORTB, PB3
-0000e1 ff40                      	SBRS	SLIDER, 0
-0000e2 9100 0104                 	LDS		R16, U_HORA
-0000e4 fd40                      	SBRC	SLIDER, 0
-0000e5 9100 0106                 	LDS		R16, U_DIA
-0000e7 940e 00ea                 	CALL	CAR_DISP
-0000e9 cfbc                      	RJMP	TER
+0000e3 9828                      	CBI		PORTB, PB0
+0000e4 982a                      	CBI		PORTB, PB2
+0000e5 982b                      	CBI		PORTB, PB3
+0000e6 982c                      	CBI		PORTB, PB4
+0000e7 9a2b                      	SBI		PORTB, PB3
+0000e8 ff40                      	SBRS	SLIDER, 0
+0000e9 9100 0104                 	LDS		R16, U_HORA
+0000eb fd40                      	SBRC	SLIDER, 0
+0000ec 9100 0106                 	LDS		R16, U_DIA
+0000ee 940e 00f1                 	CALL	CAR_DISP
+0000f0 cfbc                      	RJMP	TER
                                  
                                  
                                  // CARGAR EL VALOR DEL DISPLAY
                                  CAR_DISP:
                                  	// Sumar la posición al registro Z
-0000ea 0fe0                          ADD     ZL, R16      ; Sumar la posición al byte bajo de Z
-0000eb e000                          LDI     R16, 0       ; Cargar 0 en R16
-0000ec 1ff0                          ADC     ZH, R16      ; Sumar el acarreo al byte alto de Z (si hay desbordamiento)
+0000f1 0fe0                          ADD     ZL, R16      ; Sumar la posición al byte bajo de Z
+0000f2 e000                          LDI     R16, 0       ; Cargar 0 en R16
+0000f3 1ff0                          ADC     ZH, R16      ; Sumar el acarreo al byte alto de Z (si hay desbordamiento)
                                      // Cargar el valor de la tabla en R16 usando LPM
-0000ed 9104                          LPM     R16, Z       ; Cargar el valor de la tabla en R16
+0000f4 9104                          LPM     R16, Z       ; Cargar el valor de la tabla en R16
                                      // Enviar el valor al display (PORTD)
-0000ee b90b                          OUT     PORTD, R16   ; Mostrar el valor en el display
-0000ef 940e 00bd                 	CALL	RDISP
-0000f1 9508                      	RET
+0000f5 b90b                          OUT     PORTD, R16   ; Mostrar el valor en el display
+0000f6 940e 00c4                 	CALL	RDISP
+0000f8 9508                      	RET
                                  
                                  // AUMENTAR EL VALOR DE LA CUENTA
                                  AUMENTAR_VALOR:
-0000f2 9100 0100                     LDS     R16, U_SEG      
-0000f4 3009                          CPI     R16, 9         
-0000f5 f021                          BREQ    RUSEG           
-0000f6 9503                          INC     R16             
-0000f7 9300 0100                     STS     U_SEG, R16      
-0000f9 cf86                          RJMP    MAIN_LOOP       
+0000f9 9100 0100                     LDS     R16, U_SEG      
+0000fb 3009                          CPI     R16, 9         
+0000fc f021                          BREQ    RUSEG           
+0000fd 9503                          INC     R16             
+0000fe 9300 0100                     STS     U_SEG, R16      
+000100 cf86                          RJMP    MAIN_LOOP       
                                  
                                  RUSEG:
-0000fa 2700                          CLR     R16             
-0000fb 9300 0100                     STS     U_SEG, R16      
-0000fd 9100 0101                     LDS     R16, D_SEG      
-0000ff 3005                          CPI     R16, 5          
-000100 f021                          BREQ    RDSEG           
-000101 9503                          INC     R16             
-000102 9300 0101                     STS     D_SEG, R16      
-000104 cf7b                          RJMP    MAIN_LOOP       
+000101 2700                          CLR     R16             
+000102 9300 0100                     STS     U_SEG, R16      
+000104 9100 0101                     LDS     R16, D_SEG      
+000106 3005                          CPI     R16, 5          
+000107 f021                          BREQ    RDSEG           
+000108 9503                          INC     R16             
+000109 9300 0101                     STS     D_SEG, R16      
+00010b cf7b                          RJMP    MAIN_LOOP       
                                  
                                  RDSEG:
-000105 2700                          CLR     R16             
-000106 9300 0101                     STS     D_SEG, R16      
-000108 9100 0102                     LDS     R16, U_MIN      
-00010a 3009                          CPI     R16, 9         
-00010b f021                          BREQ    RUMIN           
-00010c 9503                          INC     R16             
-00010d 9300 0102                     STS     U_MIN, R16      
-00010f cf70                          RJMP    MAIN_LOOP       
+00010c 2700                          CLR     R16             
+00010d 9300 0101                     STS     D_SEG, R16      
+00010f 9100 0102                     LDS     R16, U_MIN      
+000111 3009                          CPI     R16, 9         
+000112 f021                          BREQ    RUMIN           
+000113 9503                          INC     R16             
+000114 9300 0102                     STS     U_MIN, R16      
+000116 cf70                          RJMP    MAIN_LOOP       
                                  
                                  RUMIN:
-000110 2700                          CLR     R16             
-000111 9300 0102                     STS     U_MIN, R16      
-000113 9100 0103                     LDS     R16, D_MIN      
-000115 3005                          CPI     R16, 5          
-000116 f021                          BREQ    RDMIN           
-000117 9503                          INC     R16             
-000118 9300 0103                     STS     D_MIN, R16      
-00011a cf65                          RJMP    MAIN_LOOP       
+000117 2700                          CLR     R16             
+000118 9300 0102                     STS     U_MIN, R16      
+00011a 9100 0103                     LDS     R16, D_MIN      
+00011c 3005                          CPI     R16, 5          
+00011d f021                          BREQ    RDMIN           
+00011e 9503                          INC     R16             
+00011f 9300 0103                     STS     D_MIN, R16      
+000121 cf65                          RJMP    MAIN_LOOP       
                                  
                                  RDMIN:
-00011b 2700                          CLR     R16             
-00011c 9300 0103                     STS     D_MIN, R16      
-00011e 9100 0105                     LDS     R16, D_HORA     
-000120 3002                          CPI     R16, 2          
-000121 f041                          BREQ    RRAPIDO         
-000122 9100 0104                     LDS     R16, U_HORA     
-000124 3009                          CPI     R16, 9         
-000125 f061                          BREQ    RUHORA          
-000126 9503                          INC     R16             
-000127 9300 0104                     STS     U_HORA, R16     
-000129 cf56                          RJMP    MAIN_LOOP       
+000122 2700                          CLR     R16             
+000123 9300 0103                     STS     D_MIN, R16      
+000125 9100 0105                     LDS     R16, D_HORA     
+000127 3002                          CPI     R16, 2          
+000128 f041                          BREQ    RRAPIDO         
+000129 9100 0104                     LDS     R16, U_HORA     
+00012b 3009                          CPI     R16, 9         
+00012c f061                          BREQ    RUHORA          
+00012d 9503                          INC     R16             
+00012e 9300 0104                     STS     U_HORA, R16     
+000130 cf56                          RJMP    MAIN_LOOP       
                                  
                                  RRAPIDO:
-00012a 9100 0104                     LDS     R16, U_HORA     
-00012c 3003                          CPI     R16, 3          
-00012d f069                          BREQ    RDHORA          
-00012e 9503                          INC     R16             
-00012f 9300 0104                     STS     U_HORA, R16     
-000131 cf4e                          RJMP    MAIN_LOOP       
+000131 9100 0104                     LDS     R16, U_HORA     
+000133 3003                          CPI     R16, 3          
+000134 f069                          BREQ    RDHORA          
+000135 9503                          INC     R16             
+000136 9300 0104                     STS     U_HORA, R16     
+000138 cf4e                          RJMP    MAIN_LOOP       
                                  
                                  RUHORA:
-000132 2700                          CLR     R16             
-000133 9300 0104                     STS     U_HORA, R16     
-000135 9100 0105                     LDS     R16, D_HORA     
-000137 9503                          INC     R16             
-000138 9300 0105                     STS     D_HORA, R16     
-00013a cf45                          RJMP    MAIN_LOOP       
+000139 2700                          CLR     R16             
+00013a 9300 0104                     STS     U_HORA, R16     
+00013c 9100 0105                     LDS     R16, D_HORA     
+00013e 9503                          INC     R16             
+00013f 9300 0105                     STS     D_HORA, R16     
+000141 cf45                          RJMP    MAIN_LOOP       
                                  
                                  RDHORA:
-00013b 2700                          CLR     R16             
-00013c 9300 0105                     STS     D_HORA, R16 
-00013e 9300 0104                 	STS     U_HORA, R16     
-000140 cf3f                          RJMP    MAIN_LOOP       
-                                 
-                                 // PENDIENTE
-                                 	//STS		U_DIA, R16
-                                 	//CPI		R16, 10
-                                 	//BREQ		RDHORA
-                                 	//INC		R16
-                                 	//LDS		R16, D_HORA
-                                 	//RJMP		MAIN_LOOP
+000142 2700                          CLR     R16             
+000143 9300 0105                     STS     D_HORA, R16 
+000145 9300 0104                 	STS     U_HORA, R16     
+000147 cf3f                          RJMP    MAIN_LOOP       
+000148 9100 0106                 	LDS		R16, U_DIA
+00014a 300a                      	CPI		R16, 10
+00014b f3b1                      	BREQ	RDHORA
+00014c 9503                      	INC		R16
+00014d 9300 0105                 	STS		D_HORA, R16
+00014f cf37                      	RJMP	MAIN_LOOP
                                  
                                  
                                  
                                  // SE ACTIVA CON UN OVERFLOW
                                  TMR0_ISR:
-000141 9553                      	INC		CAMBIADOR
-000142 9100 010a                 	LDS		R16, TIEMPOR
-000144 bd06                          OUT     TCNT0, R16
-000145 9523                          INC     TIEMPO
-000146 9518                          RETI
+000150 9100 010a                 	LDS		R16, TIEMPOR
+000152 bd06                          OUT     TCNT0, R16
+000153 9523                          INC     TIEMPO
+000154 9518                          RETI
+                                 
+                                 TMR2_ISR:
+000155 9553                      	INC		CAMBIADOR
+000156 9563                      	INC		CALEDS
+000157 9100 010a                 	LDS		R16, TIEMPOR
+000159 9300 00b2                 	STS     TCNT2, R16
+00015b 9518                      	RETI
                                  
                                  // SE ACTIVA AL PRECIONAR UN BOTON
                                  PCINT_ISR:
-000147 9b32                      	SBIS    PINC, PC2   
-000148 c007                          RJMP    CAMBIO      
-000149 9b31                          SBIS    PINC, PC1   
-00014a c00b                          RJMP    BOTON1
-00014b 9b30                      	SBIS    PINC, PC0   
-00014c c00a                          RJMP    BOTON2      
-00014d 9b1d                          SBIS    PINB, PB5   
-00014e c009                          RJMP    BOTON3   
-00014f 9518                          RETI                
+00015c 9b33                      	SBIS    PINC, PC3   
+00015d c007                          RJMP    CAMBIO      
+00015e 9b32                          SBIS    PINC, PC2   
+00015f c00d                          RJMP    BOTON3
+000160 9b31                      	SBIS    PINC, PC1   
+000161 c00a                          RJMP    BOTON2      
+000162 9b30                          SBIS    PINC, PC0   
+000163 c007                          RJMP    BOTON1   
+000164 9518                          RETI                
                                  
                                  CAMBIO:
-000150 9513                      	INC		MODO				;CAMBIO DE MODO
-000151 3015                      	CPI		MODO, 5
-000152 f009                      	BREQ	REINICIO
-000153 9518                      	RETI
+000165 9513                      	INC		MODO				;CAMBIO DE MODO
+000166 3015                      	CPI		MODO, 5
+000167 f009                      	BREQ	REINICIO
+000168 9518                      	RETI
                                  
                                  REINICIO:
-000154 2711                      	CLR		MODO				; Si modo llego a 5 se reincia a 5
-000155 9518                      	RETI
+000169 2711                      	CLR		MODO				; Si modo llego a 5 se reincia a 5
+00016a 9518                      	RETI
                                  
                                  BOTON1:							;Funcionamiento para boton 1
                                  	//CPI		MODO, 1				;Se activa si estamos en modo config hora
@@ -1455,7 +1469,7 @@ C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(8): Inc
                                  	//BREQ	SUMA_FECHA
                                  	//CPI		MODO, 4
                                  	//BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
-000156 9518                      	RETI
+00016b 9518                      	RETI
                                  
                                  BOTON2:
                                  	//CPI		MODO, 1
@@ -1464,7 +1478,7 @@ C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(8): Inc
                                  	//BREQ	RESTA_FECHA			;Se activa si estamos en modo config fecha
                                  	//CPI		MODO, 4
                                  	//BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
-000157 9518                      	RETI
+00016c 9518                      	RETI
                                  
                                  BOTON3:
                                  	//CPI		MODO, 1
@@ -1473,7 +1487,7 @@ C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(8): Inc
                                  	//BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config fecha
                                  	//CPI		MODO, 4
                                  	//BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
-000158 9518                      	RETI
+00016d 9518                      	RETI
                                  
                                  
 
@@ -1495,37 +1509,37 @@ counted separately from r26..r31 here.
 "ATmega328P" register use summary:
 x  :   0 y  :   0 z  :   2 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:  97 r17:   9 r18:   6 r19:   0 r20:  10 
-r21:   8 r22:   0 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
+r13:   0 r14:   0 r15:   0 r16: 107 r17:   9 r18:   4 r19:   0 r20:  10 
+r21:   8 r22:   3 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
 r29:   0 r30:   3 r31:   3 
-Registers used: 8 out of 35 (22.9%)
+Registers used: 9 out of 35 (25.7%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   1 add   :   1 adiw  :   0 and   :   0 
 andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
-brcc  :   0 brcs  :   0 break :   0 breq  :  20 brge  :   0 brhc  :   0 
+brcc  :   0 brcs  :   0 break :   0 breq  :  21 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
 brne  :   1 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   0 call  :   5 cbi   :  27 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   1 cln   :   0 clr   :   8 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
-cpi   :  21 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :  10 jmp   :   3 
-ld    :   0 ldd   :   0 ldi   :  25 lds   :  18 lpm   :   4 lsl   :   0 
+cpi   :  22 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :  12 jmp   :   4 
+ld    :   0 ldd   :   0 ldi   :  26 lds   :  21 lpm   :   4 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   9 pop   :   0 
-push  :   0 rcall :   0 ret   :   2 reti  :   7 rjmp  :  26 rol   :   0 
+push  :   0 rcall :   0 ret   :   2 reti  :   8 rjmp  :  27 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :  24 sbic  :   0 sbis  :   4 
 sbiw  :   0 sbr   :   0 sbrc  :   4 sbrs  :   4 sec   :   0 seh   :   0 
 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :  31 
+sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :  35 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
 Instructions used: 24 out of 113 (21.2%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x0002b2    624     10    634   32768   1.9%
+[.cseg] 0x000000 0x0002dc    670     10    680   32768   2.1%
 [.dseg] 0x000100 0x00010b      0     11     11    2048   0.5%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
