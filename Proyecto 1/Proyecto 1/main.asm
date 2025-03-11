@@ -92,7 +92,7 @@ SETUP:
     LDI     R16, 0b00000100
     STS     CLKPR, R16
 
-    LDI     R16, (1<<CS00) | (1<<CS01)  
+    LDI     R16, (1<<CS00) | (1<<CS00)  
     OUT     TCCR0B, R16
 	LDS		R16, TIEMPOR
     OUT     TCNT0, R16
