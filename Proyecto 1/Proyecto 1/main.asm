@@ -11,6 +11,7 @@
 .org 0x0000             
     JMP     START       
 
+.org PCI0addr           ; Vector de interrupción de PCINT
 .org PCI1addr           ; Vector de interrupción de PCINT
     JMP     PCINT_ISR   ; Saltar a la rutina de interrupción de PCINT
 
@@ -63,10 +64,12 @@ SETUP:
     STS     D_MIN, R16  ; Inicializar D_MIN en 0
     STS     U_HORA, R16 ; Inicializar U_HORA en 0
     STS     D_HORA, R16 ; Inicializar D_HORA en 0
-    STS     U_DIA, R16  ; Inicializar U_DIA en 0
-    STS     D_DIA, R16  ; Inicializar D_DIA en 0
-    STS     U_MES, R16  ; Inicializar U_MES en 0
-    STS     D_MES, R16  ; Inicializar D_MES en 0
+	STS     D_DIA, R16  ; Inicializar D_DIA en 0
+	STS     D_MES, R16  ; Inicializar D_MES en 0
+	LDI     R16, 1
+    STS     U_DIA, R16  ; Inicializar U_DIA en 1
+    STS     U_MES, R16  ; Inicializar U_MES en 1
+    
 
 	//	Cargar valor inicial de la tabla
 	LDI     ZL, LOW(DISPLAY << 1)   ; Cargar el byte bajo de la dirección de la tabla
@@ -89,7 +92,7 @@ SETUP:
     LDI     R16, 0b00000100
     STS     CLKPR, R16
 
-    LDI     R16, (1<<CS00) | (1<<CS00)  
+    LDI     R16, (1<<CS00) | (1<<CS01)  
     OUT     TCCR0B, R16
 	LDS		R16, TIEMPOR
     OUT     TCNT0, R16
@@ -100,25 +103,24 @@ SETUP:
 	LDI		R16, (1 << PCIE1) | (1 << PCIE0)	// Habilita interrupciones en PC y PB
 	STS		PCICR, R16
 
-	LDI		R16, (1 << PCINT8) | (1 << PCINT9) | (1 << PCINT10) // Habilita interrupciones en PC0 , PC1 , PC3
-	STS		PCMSK1, R16
-
 	LDI		R16, (1 << PCINT5)  // Habilita interrupciones en PB5
 	STS		PCMSK0, R16
 
+	LDI		R16, (1 << PCINT8) | (1 << PCINT9) | (1 << PCINT10) // Habilita interrupciones en PC0 , PC1 , PC3
+	STS		PCMSK1, R16
 
 // DISPLAY
 	LDI		R16, 0xFF
 	OUT		DDRD, R16
 	LDI		R16, 0x00
-	OUT		PORTB, R16
+	OUT		PORTD, R16
 
 
 // LED RGB
 	SBI		DDRC, PC3
 	CBI		PORTC, PC3
-	SBI		DDRB, PC4
-	CBI		PORTB, PC3
+	SBI		DDRC, PC4
+	CBI		PORTC, PC4
 
 // BOTONES
 	CBI		DDRB, PB5 ; CAMBIO DE MODO
@@ -171,10 +173,26 @@ LED2:
 	BREQ	SETFECHA
 	CPI		MODO, 4
 	BREQ	ALARMA
+	RJMP    MAIN_LOOP
+
+SD_HORA:
+	CBI		PORTB, PB0
+	CBI		PORTB, PB2
+	CBI		PORTB, PB3
+	CBI		PORTB, PB4
+	SBI		PORTB, PB4
+	SBRS	SLIDER, 0
+	LDS		R16, D_HORA
+	SBRC	SLIDER, 0
+	LDS		R16, D_DIA
+	CALL	CAR_DISP
+	RJMP	CUAR
 	
 HORA_MIN:
 	CBI		PORTC, PC4
 	SBI		PORTC, PC3
+	LDI		SLIDER, 0 
+CER:
 	CPI		CAMBIADOR, 0
 	BREQ	SU_MIN
 PRI:
@@ -190,20 +208,20 @@ CUAR:
 	CPI		CAMBIADOR, 4
 	BREQ	REINI
 CINC:
-	CPI		TIEMPO, 2
+	CPI		TIEMPO, 100
 	BRNE	MAIN_LOOP
 	CLR		TIEMPO
 	RJMP	AUMENTAR_VALOR
 	RJMP	MAIN_LOOP
 
 SETHORA:
-
 	RJMP	MAIN_LOOP
 
 FECHA:
 	SBI		PORTC, PC4
 	CBI		PORTC, PC3
-	RJMP	MAIN_LOOP
+	LDI		SLIDER, 1
+	RJMP	CER
 
 SETFECHA:
 	RJMP	MAIN_LOOP
@@ -235,7 +253,10 @@ SU_MIN:
 	CBI		PORTB, PB3
 	CBI		PORTB, PB4
 	SBI		PORTB, PB0
+	SBRS	SLIDER, 0
 	LDS		R16, U_MIN
+	SBRC	SLIDER, 0
+	LDS		R16, U_MES
 	CALL	CAR_DISP
 	RJMP	PRI
 
@@ -245,7 +266,10 @@ SD_MIN:
 	CBI		PORTB, PB3
 	CBI		PORTB, PB4
 	SBI		PORTB, PB2
+	SBRS	SLIDER, 0
 	LDS		R16, D_MIN
+	SBRC	SLIDER, 0
+	LDS		R16, D_MES
 	CALL	CAR_DISP
 	RJMP	SEG
 SU_HORA:
@@ -254,18 +278,13 @@ SU_HORA:
 	CBI		PORTB, PB3
 	CBI		PORTB, PB4
 	SBI		PORTB, PB3
+	SBRS	SLIDER, 0
 	LDS		R16, U_HORA
+	SBRC	SLIDER, 0
+	LDS		R16, U_DIA
 	CALL	CAR_DISP
-	RJMP	CUAR
-SD_HORA:
-	CBI		PORTB, PB0
-	CBI		PORTB, PB2
-	CBI		PORTB, PB3
-	CBI		PORTB, PB4
-	SBI		PORTB, PB4
-	LDS		R16, D_HORA
-	CALL	CAR_DISP
-	RJMP	MAIN_LOOP
+	RJMP	TER
+
 
 // CARGAR EL VALOR DEL DISPLAY
 CAR_DISP:
@@ -275,7 +294,7 @@ CAR_DISP:
     ADC     ZH, R16      ; Sumar el acarreo al byte alto de Z (si hay desbordamiento)
     // Cargar el valor de la tabla en R16 usando LPM
     LPM     R16, Z       ; Cargar el valor de la tabla en R16
-    // Enviar el valor al display (PORTB)
+    // Enviar el valor al display (PORTD)
     OUT     PORTD, R16   ; Mostrar el valor en el display
 	CALL	RDISP
 	RET
@@ -374,20 +393,19 @@ TMR0_ISR:
 
 // SE ACTIVA AL PRECIONAR UN BOTON
 PCINT_ISR:
-
-	SBIS    PINB, PB5   
+	SBIS    PINC, PC2   
     RJMP    CAMBIO      
-    //SBIS    PINC, PC1   
-    //RJMP    BOTON1
-	//SBIS    PINC, PC0   
-    //RJMP    BOTON2      
-    //SBIS    PINC, PC3   
-    //RJMP    BOTON3   
+    SBIS    PINC, PC1   
+    RJMP    BOTON1
+	SBIS    PINC, PC0   
+    RJMP    BOTON2      
+    SBIS    PINB, PB5   
+    RJMP    BOTON3   
     RETI                
 
 CAMBIO:
 	INC		MODO				;CAMBIO DE MODO
-	CPI		MODO, 2
+	CPI		MODO, 5
 	BREQ	REINICIO
 	RETI
 
@@ -395,31 +413,31 @@ REINICIO:
 	CLR		MODO				; Si modo llego a 5 se reincia a 5
 	RETI
 
-//BOTON1:							;Funcionamiento para boton 1
-//	CPI		MODO, 1				;Se activa si estamos en modo config hora
-//	BREQ	SUMA_HORA
-//	CPI		MODO, 3				;Se activa si estamos en modo config fecha
-//	BREQ	SUMA_FECHA
-//	CPI		MODO, 4
-//	BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
-//	RETI
-//
-//BOTON2:
-//	CPI		MODO, 1
-//	BREQ	RESTA_HORA			;Se activa si estamos en modo config hora
-//	CPI		MODO, 3
-//	BREQ	RESTA_FECHA			;Se activa si estamos en modo config fecha
-//	CPI		MODO, 4
-//	BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
-//	RETI
-//
-//BOTON3:
-//	CPI		MODO, 1
-//	BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config hora
-//	CPI		MODO, 3
-//	BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config fecha
-//	CPI		MODO, 4
-//	BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
-//	RETI
+BOTON1:							;Funcionamiento para boton 1
+	//CPI		MODO, 1				;Se activa si estamos en modo config hora
+	//BREQ	SUMA_HORA
+	//CPI		MODO, 3				;Se activa si estamos en modo config fecha
+	//BREQ	SUMA_FECHA
+	//CPI		MODO, 4
+	//BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
+	RETI
+
+BOTON2:
+	//CPI		MODO, 1
+	//BREQ	RESTA_HORA			;Se activa si estamos en modo config hora
+	//CPI		MODO, 3
+	//BREQ	RESTA_FECHA			;Se activa si estamos en modo config fecha
+	//CPI		MODO, 4
+	//BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
+	RETI
+
+BOTON3:
+	//CPI		MODO, 1
+	//BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config hora
+	//CPI		MODO, 3
+	//BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config fecha
+	//CPI		MODO, 4
+	//BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
+	RETI
 
 
