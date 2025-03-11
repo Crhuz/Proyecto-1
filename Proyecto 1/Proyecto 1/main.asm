@@ -28,13 +28,11 @@ START:
 DISPLAY: 
     .db 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F
 
-.def	COMP1 = R14
-.def	COMP2 = R15
 .def	MODO = R17
 .def	TIEMPO = R18
 .def	COUNTER = R19
 .def	SLIDER = R20
-
+.def	CAMBIADOR = R21
 .dseg    
              
 .org SRAM_START         
@@ -81,9 +79,8 @@ SETUP:
 
 	LDI		MODO, 0				// INICIAR EL VALOR DEL MODO EN 0
 	LDI		TIEMPO, 0			// INICIAR EL VALOR DE TIEMPO EN 0
-	LDI		R16, 0
-	MOV		COMP1, R16
-	MOV		COMP2, R16
+	LDI		CAMBIADOR, 0
+
 
 	// Habilitar interrupciones
 
@@ -92,7 +89,7 @@ SETUP:
     LDI     R16, 0b00000100
     STS     CLKPR, R16
 
-    LDI     R16, (1<<CS01) | (1<<CS00)  
+    LDI     R16, (1<<CS00) | (1<<CS00)  
     OUT     TCCR0B, R16
 	LDS		R16, TIEMPOR
     OUT     TCNT0, R16
@@ -158,26 +155,74 @@ SETUP:
 SEI				// Habilitar interrupciones
 
 MAIN_LOOP:
-	SBRC	COMP1, 0
-	CALL	SU_MIN
-	SBRS	COMP1, 0
-	CALL	SD_MIN
-	SBRC	COMP1, 0
-	CALL	SU_HORA
-	SBRS	COMP1, 0
-	CALL	SD_HORA
 	CPI		TIEMPO, 50
-	BREQ	LEDC
+	BREQ	LEDC1
+LED1:
 	CPI		TIEMPO, 100
+	BREQ	LEDC2
+LED2:
+	CPI		MODO, 0
+	BREQ	HORA_MIN
+	CPI		MODO, 1
+	BREQ	SETHORA
+	CPI		MODO, 2
+	BREQ	FECHA
+	CPI		MODO, 3
+	BREQ	SETFECHA
+	CPI		MODO, 4
+	BREQ	ALARMA
+	
+HORA_MIN:
+	CBI		PORTC, PC4
+	SBI		PORTC, PC3
+	CPI		CAMBIADOR, 0
+	BREQ	SU_MIN
+PRI:
+	CPI		CAMBIADOR, 1
+	BREQ	SD_MIN
+SEG:
+	CPI		CAMBIADOR, 2
+	BREQ	SU_HORA
+TER:
+	CPI		CAMBIADOR, 3
+	BREQ	SD_HORA
+CUAR:
+	CPI		CAMBIADOR, 4
+	BREQ	REINI
+CINC:
+	CPI		TIEMPO, 2
 	BRNE	MAIN_LOOP
-	CBI		PORTB, PB1
 	CLR		TIEMPO
 	RJMP	AUMENTAR_VALOR
 	RJMP	MAIN_LOOP
 
-LEDC:
-	SBI	  PORTB, PB1
-	RJMP  MAIN_LOOP
+SETHORA:
+
+	RJMP	MAIN_LOOP
+
+FECHA:
+	SBI		PORTC, PC4
+	CBI		PORTC, PC3
+	RJMP	MAIN_LOOP
+
+SETFECHA:
+	RJMP	MAIN_LOOP
+
+ALARMA: 
+	SBI		PORTC, PC3
+	RJMP	MAIN_LOOP
+
+REINI:
+	LDI		CAMBIADOR, 0
+	RJMP	CINC
+
+LEDC1:
+	SBI		PORTB, PB1
+	RJMP	LED1
+
+LEDC2:
+	CBI		PORTB, PB1
+	RJMP	LED2
 
 RDISP:
 	LDI     ZL, LOW(DISPLAY << 1)   ; Cargar el byte bajo de la dirección de la tabla
@@ -192,7 +237,7 @@ SU_MIN:
 	SBI		PORTB, PB0
 	LDS		R16, U_MIN
 	CALL	CAR_DISP
-	RET
+	RJMP	PRI
 
 SD_MIN:
 	CBI		PORTB, PB0
@@ -202,7 +247,7 @@ SD_MIN:
 	SBI		PORTB, PB2
 	LDS		R16, D_MIN
 	CALL	CAR_DISP
-	RET
+	RJMP	SEG
 SU_HORA:
 	CBI		PORTB, PB0
 	CBI		PORTB, PB2
@@ -211,7 +256,7 @@ SU_HORA:
 	SBI		PORTB, PB3
 	LDS		R16, U_HORA
 	CALL	CAR_DISP
-	RET
+	RJMP	CUAR
 SD_HORA:
 	CBI		PORTB, PB0
 	CBI		PORTB, PB2
@@ -220,7 +265,7 @@ SD_HORA:
 	SBI		PORTB, PB4
 	LDS		R16, D_HORA
 	CALL	CAR_DISP
-	RET
+	RJMP	MAIN_LOOP
 
 // CARGAR EL VALOR DEL DISPLAY
 CAR_DISP:
@@ -238,7 +283,7 @@ CAR_DISP:
 // AUMENTAR EL VALOR DE LA CUENTA
 AUMENTAR_VALOR:
     LDS     R16, U_SEG      
-    CPI     R16, 10         
+    CPI     R16, 9         
     BREQ    RUSEG           
     INC     R16             
     STS     U_SEG, R16      
@@ -258,7 +303,7 @@ RDSEG:
     CLR     R16             
     STS     D_SEG, R16      
     LDS     R16, U_MIN      
-    CPI     R16, 10         
+    CPI     R16, 9         
     BREQ    RUMIN           
     INC     R16             
     STS     U_MIN, R16      
@@ -281,7 +326,7 @@ RDMIN:
     CPI     R16, 2          
     BREQ    RRAPIDO         
     LDS     R16, U_HORA     
-    CPI     R16, 10         
+    CPI     R16, 9         
     BREQ    RUHORA          
     INC     R16             
     STS     U_HORA, R16     
@@ -289,7 +334,7 @@ RDMIN:
 
 RRAPIDO:
     LDS     R16, U_HORA     
-    CPI     R16, 4          
+    CPI     R16, 3          
     BREQ    RDHORA          
     INC     R16             
     STS     U_HORA, R16     
@@ -312,27 +357,26 @@ RDHORA:
 // PENDIENTE
 	//STS		U_DIA, R16
 	//CPI		R16, 10
-	//BREQ	RDHORA
+	//BREQ		RDHORA
 	//INC		R16
 	//LDS		R16, D_HORA
-	//RJMP	MAIN_LOOP
+	//RJMP		MAIN_LOOP
 
 
 
 // SE ACTIVA CON UN OVERFLOW
 TMR0_ISR:
-	INC		COMP1
-	INC		COMP2
-	LDS		SLIDER, TIEMPOR
-    OUT     TCNT0, SLIDER
+	INC		CAMBIADOR
+	LDS		R16, TIEMPOR
+    OUT     TCNT0, R16
     INC     TIEMPO
     RETI
 
 // SE ACTIVA AL PRECIONAR UN BOTON
 PCINT_ISR:
-	// PENDIENTE
-	//SBIS    PINB, PB5   
-    //RJMP    CAMBIO      
+
+	SBIS    PINB, PB5   
+    RJMP    CAMBIO      
     //SBIS    PINC, PC1   
     //RJMP    BOTON1
 	//SBIS    PINC, PC0   
@@ -341,16 +385,16 @@ PCINT_ISR:
     //RJMP    BOTON3   
     RETI                
 
-//CAMBIO:
-//	INC		MODO				;CAMBIO DE MODO
-//	CPI		MODO, 5
-//	BREQ	REINICIO
-//	RETI
-//
-//REINICIO:
-//	CLR		MODO				; Si modo llego a 5 se reincia a 5
-//	RETI
-//
+CAMBIO:
+	INC		MODO				;CAMBIO DE MODO
+	CPI		MODO, 2
+	BREQ	REINICIO
+	RETI
+
+REINICIO:
+	CLR		MODO				; Si modo llego a 5 se reincia a 5
+	RETI
+
 //BOTON1:							;Funcionamiento para boton 1
 //	CPI		MODO, 1				;Se activa si estamos en modo config hora
 //	BREQ	SUMA_HORA
