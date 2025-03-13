@@ -23,9 +23,9 @@
  </OUTPUT_FILES>
  <LABELS>
   <START><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>25</LINE></START>
-  <PCINT_ISR><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>735</LINE></PCINT_ISR>
-  <TMR2_ISR><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>720</LINE></TMR2_ISR>
-  <TMR0_ISR><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>714</LINE></TMR0_ISR>
+  <PCINT_ISR><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>736</LINE></PCINT_ISR>
+  <TMR2_ISR><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>721</LINE></TMR2_ISR>
+  <TMR0_ISR><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>715</LINE></TMR0_ISR>
   <DISPLAY><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>33</LINE></DISPLAY>
   <U_SEG><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>48</LINE></U_SEG>
   <D_SEG><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>49</LINE></D_SEG>
@@ -53,9 +53,9 @@
   <LFECHA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>197</LINE></LFECHA>
   <LSETFECHA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>200</LINE></LSETFECHA>
   <LALARMA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>203</LINE></LALARMA>
-  <FECHA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>431</LINE></FECHA>
-  <SETFECHA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>440</LINE></SETFECHA>
-  <ALARMA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>448</LINE></ALARMA>
+  <FECHA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>432</LINE></FECHA>
+  <SETFECHA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>441</LINE></SETFECHA>
+  <ALARMA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>449</LINE></ALARMA>
   <CER><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>219</LINE></CER>
   <LSU_MIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>241</LINE></LSU_MIN>
   <PRI><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>222</LINE></PRI>
@@ -66,11 +66,11 @@
   <LSD_HORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>247</LINE></LSD_HORA>
   <CUAR><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>231</LINE></CUAR>
   <LMAIN_LOOP><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>249</LINE></LMAIN_LOOP>
-  <AUMENTAR_VALOR><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>528</LINE></AUMENTAR_VALOR>
-  <SU_MIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>462</LINE></SU_MIN>
-  <SD_MIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>475</LINE></SD_MIN>
-  <SU_HORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>487</LINE></SU_HORA>
-  <SD_HORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>500</LINE></SD_HORA>
+  <AUMENTAR_VALOR><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>529</LINE></AUMENTAR_VALOR>
+  <SU_MIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>463</LINE></SU_MIN>
+  <SD_MIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>476</LINE></SD_MIN>
+  <SU_HORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>488</LINE></SU_HORA>
+  <SD_HORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>501</LINE></SD_HORA>
   <MAINSD1><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>269</LINE></MAINSD1>
   <REGS><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>263</LINE></REGS>
   <MAINRD1><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>280</LINE></MAINRD1>
@@ -79,49 +79,49 @@
   <SUMMIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>319</LINE></SUMMIN>
   <SUMHORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>342</LINE></SUMHORA>
   <RESMIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>375</LINE></RESMIN>
-  <RESHORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>397</LINE></RESHORA>
+  <RESHORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>398</LINE></RESHORA>
   <CDMIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>327</LINE></CDMIN>
   <REMIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>337</LINE></REMIN>
   <CONTCUA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>353</LINE></CONTCUA>
   <CDHORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>361</LINE></CDHORA>
   <REHORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>369</LINE></REHORA>
   <RCDMIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>383</LINE></RCDMIN>
-  <RREMIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>392</LINE></RREMIN>
-  <RCONTCUA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>408</LINE></RCONTCUA>
-  <RCDHORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>416</LINE></RCDHORA>
-  <RREHORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>424</LINE></RREHORA>
-  <RDISP><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>457</LINE></RDISP>
-  <CAR_DISP><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>515</LINE></CAR_DISP>
-  <RUSEG><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>536</LINE></RUSEG>
-  <RDSEG><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>546</LINE></RDSEG>
-  <RUMIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>556</LINE></RUMIN>
-  <RDMIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>566</LINE></RDMIN>
-  <RRAPIDO><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>579</LINE></RRAPIDO>
-  <RUHORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>587</LINE></RUHORA>
-  <RDHORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>595</LINE></RDHORA>
-  <FINALES><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>623</LINE></FINALES>
-  <LARGOS><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>633</LINE></LARGOS>
-  <FEB><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>643</LINE></FEB>
-  <CORTOS><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>638</LINE></CORTOS>
-  <DICI><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>648</LINE></DICI>
-  <FMESL><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>660</LINE></FMESL>
-  <COMUN1><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>652</LINE></COMUN1>
-  <FMESC><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>665</LINE></FMESC>
-  <FMESFEB><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>670</LINE></FMESFEB>
-  <FMESDIC><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>675</LINE></FMESDIC>
-  <UDIA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>684</LINE></UDIA>
-  <UMESF><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>692</LINE></UMESF>
-  <COMUN2><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>679</LINE></COMUN2>
-  <UMESFD><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>702</LINE></UMESFD>
-  <RCAMBIADOR><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>730</LINE></RCAMBIADOR>
-  <SIGUE><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>724</LINE></SIGUE>
-  <CAMBIO><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>746</LINE></CAMBIO>
-  <BOTON3><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>786</LINE></BOTON3>
-  <BOTON2><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>771</LINE></BOTON2>
-  <BOTON1><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>756</LINE></BOTON1>
-  <REINICIO><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>752</LINE></REINICIO>
-  <SUMA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>765</LINE></SUMA>
-  <RESTA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>780</LINE></RESTA>
-  <CAMBIARDISPLAY><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>795</LINE></CAMBIARDISPLAY>
+  <RREMIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>393</LINE></RREMIN>
+  <RCONTCUA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>409</LINE></RCONTCUA>
+  <RCDHORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>417</LINE></RCDHORA>
+  <RREHORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>425</LINE></RREHORA>
+  <RDISP><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>458</LINE></RDISP>
+  <CAR_DISP><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>516</LINE></CAR_DISP>
+  <RUSEG><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>537</LINE></RUSEG>
+  <RDSEG><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>547</LINE></RDSEG>
+  <RUMIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>557</LINE></RUMIN>
+  <RDMIN><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>567</LINE></RDMIN>
+  <RRAPIDO><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>580</LINE></RRAPIDO>
+  <RUHORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>588</LINE></RUHORA>
+  <RDHORA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>596</LINE></RDHORA>
+  <FINALES><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>624</LINE></FINALES>
+  <LARGOS><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>634</LINE></LARGOS>
+  <FEB><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>644</LINE></FEB>
+  <CORTOS><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>639</LINE></CORTOS>
+  <DICI><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>649</LINE></DICI>
+  <FMESL><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>661</LINE></FMESL>
+  <COMUN1><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>653</LINE></COMUN1>
+  <FMESC><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>666</LINE></FMESC>
+  <FMESFEB><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>671</LINE></FMESFEB>
+  <FMESDIC><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>676</LINE></FMESDIC>
+  <UDIA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>685</LINE></UDIA>
+  <UMESF><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>693</LINE></UMESF>
+  <COMUN2><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>680</LINE></COMUN2>
+  <UMESFD><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>703</LINE></UMESFD>
+  <RCAMBIADOR><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>731</LINE></RCAMBIADOR>
+  <SIGUE><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>725</LINE></SIGUE>
+  <CAMBIO><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>747</LINE></CAMBIO>
+  <BOTON3><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>787</LINE></BOTON3>
+  <BOTON2><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>772</LINE></BOTON2>
+  <BOTON1><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>757</LINE></BOTON1>
+  <REINICIO><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>753</LINE></REINICIO>
+  <SUMA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>766</LINE></SUMA>
+  <RESTA><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>781</LINE></RESTA>
+  <CAMBIARDISPLAY><FILE>C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm</FILE><LINE>796</LINE></CAMBIARDISPLAY>
  </LABELS>
 </ASSEMBLER_INFO>
