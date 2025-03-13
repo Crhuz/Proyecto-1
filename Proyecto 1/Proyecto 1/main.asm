@@ -56,6 +56,10 @@ D_DIA: .byte 1         ; Guardado en RAM (0x107)
 U_MES: .byte 1         ; Guardado en RAM (0x108)
 D_MES: .byte 1         ; Guardado en RAM (0x109)
 TIEMPOR: .byte 1         ; Guardado en RAM (0x110)
+MDISP: .byte 1         ; Guardado en RAM (0x111)
+ACTISUM: .byte 1         ; Guardado en RAM (0x112)
+ACTIRES: .byte 1         ; Guardado en RAM (0x113)
+MODOQ: .byte 1			; Guardado en RAM (0x114)
 
 .cseg                   ; Volver a la sección de código
 
@@ -72,6 +76,10 @@ SETUP:
     STS     D_HORA, R16 ; Inicializar D_HORA en 0
 	STS     D_DIA, R16  ; Inicializar D_DIA en 0
     STS     D_MES, R16  ; Inicializar U_MES en 0
+	STS     MDISP, R16  ; Inicializar MDISP en 0
+	STS     ACTISUM, R16  ; Inicializar ACTISUM en 0
+	STS     ACTIRES, R16  ; Inicializar ACTIRES en 0
+	STS     MODOQ, R16  ; Inicializar MODOQ en 0
 	LDI     R16, 1
     STS     U_DIA, R16  ; Inicializar U_DIA en 1
     STS     U_MES, R16  ; Inicializar U_MES en 1
@@ -179,65 +187,21 @@ LED2:
 	CPI		MODO, 1
 	BREQ	SETHORA
 	CPI		MODO, 2
-	BREQ	FECHA
+	BREQ	LFECHA
 	CPI		MODO, 3
-	BREQ	SETFECHA
+	BREQ	LSETFECHA
 	CPI		MODO, 4
-	BREQ	ALARMA
+	BREQ	LALARMA
 	RJMP    MAIN_LOOP
 
-SD_HORA:
-	CBI		PORTB, PB0
-	CBI		PORTB, PB2
-	CBI		PORTB, PB3
-	CBI		PORTB, PB4
-	SBI		PORTB, PB4
-	SBRS	SLIDER, 0
-	LDS		R16, D_HORA
-	SBRC	SLIDER, 0
-	LDS		R16, D_DIA
-	CALL	CAR_DISP
-	RJMP	CUAR
-	
-HORA_MIN:
-	CBI		PORTC, PC4
-	SBI		PORTC, PC5
-	LDI		SLIDER, 0 
-CER:
-	CPI		CAMBIADOR, 0
-	BREQ	SU_MIN
-PRI:
-	CPI		CAMBIADOR, 1
-	BREQ	SD_MIN
-SEG:
-	CPI		CAMBIADOR, 2
-	BREQ	SU_HORA
-TER:
-	CPI		CAMBIADOR, 3
-	BREQ	SD_HORA
-CUAR:
-	CPI		TIEMPO, 2
-	BRNE	MAIN_LOOP
-	CLR		TIEMPO
-	RJMP	AUMENTAR_VALOR
-	RJMP	MAIN_LOOP
+LFECHA:
+	RJMP	FECHA
 
-SETHORA:
-	RJMP	MAIN_LOOP
+LSETFECHA:
+	RJMP	SETFECHA
 
-FECHA:
-	SBI		PORTC, PC4
-	CBI		PORTC, PC5
-	LDI		SLIDER, 1
-	RJMP	CER
-
-SETFECHA:
-	RJMP	MAIN_LOOP
-
-ALARMA: 
-	SBI		PORTC, PC5
-	RJMP	MAIN_LOOP
-
+LALARMA:
+	RJMP	ALARMA
 
 LEDC1:
 	SBI		PORTB, PB1
@@ -246,6 +210,249 @@ LEDC1:
 LEDC2:
 	CBI		PORTB, PB1
 	RJMP	LED2
+
+
+HORA_MIN:
+	CBI		PORTC, PC4
+	SBI		PORTC, PC5
+	LDI		SLIDER, 0 
+CER:
+	CPI		CAMBIADOR, 0
+	BREQ	LSU_MIN
+PRI:
+	CPI		CAMBIADOR, 1
+	BREQ	LSD_MIN
+SEG:
+	CPI		CAMBIADOR, 2
+	BREQ	LSU_HORA
+TER:
+	CPI		CAMBIADOR, 3
+	BREQ	LSD_HORA
+CUAR:
+	LDS		R16, MODOQ
+	CPI		R16, 1
+	BREQ	LMAIN_LOOP
+	CPI		TIEMPO, 2
+	BRNE	LMAIN_LOOP
+	CLR		TIEMPO
+	RJMP	AUMENTAR_VALOR
+	RJMP	MAIN_LOOP
+
+LSU_MIN:
+	RJMP	SU_MIN
+LSD_MIN:
+	RJMP	SD_MIN
+LSU_HORA:
+	RJMP	SU_HORA
+LSD_HORA:
+	RJMP	SD_HORA
+LMAIN_LOOP:
+	RJMP	MAIN_LOOP
+
+SETHORA:
+	CBI		PORTC, PC4
+	SBI		PORTC, PC5
+
+	LDS		R16, MODOQ		; Deshabilitar Suma
+	LDI		R16, 1			;
+	STS		MODOQ, R16		;
+
+	LDS		R16, ACTISUM
+	SBRC	R16, 0
+	RJMP	MAINSD1
+REGS:
+	LDS		R16, ACTIRES
+	SBRC	R16, 0
+	RJMP	MAINRD1
+	RJMP	CER
+
+MAINSD1:
+	LDS		R16, ACTISUM	;REINICIAR ACTIVADOR DE SUMA	
+	CLR		R16
+	STS		ACTISUM, R16
+
+	CPI		SLIDER, 0
+	BREQ	COMSH
+	//CPI	SLIDER, 1
+	//BREQ	COMSM
+	RJMP    MAIN_LOOP
+
+MAINRD1:
+	LDS		R16, ACTIRES	;REINICIAR ACTIVADOR DE RESTA
+	CLR		R16				
+	STS		ACTIRES, R16
+
+	CPI		SLIDER, 0
+	BREQ	COMRH
+	//CPI		SLIDER, 1
+	//BREQ	COMRM
+	RJMP    MAIN_LOOP
+
+COMSH:
+	LDS		R16, MDISP
+	SBRS	R16, 0
+	RJMP	SUMMIN
+	SBRC	R16, 0
+	RJMP	SUMHORA
+
+COMRH:
+	LDS		R16, MDISP
+	SBRS	R16, 0
+	RJMP	RESMIN
+	SBRC	R16, 0
+	RJMP	RESHORA
+
+	//	PENDIENTE 
+//COMSM:
+//	LDS		R16, MDISP
+//	SBRS	MDISPLAY, 0
+//	RJMP	SUMMES
+//	SBRC	MDISPLAY, 0
+//	RJMP	SUMDIA
+//COMRM:
+//	LDS		R16, MDISP
+//	SBRS	MDISPLAY, 0
+//	RJMP	RESMES
+//	SBRC	MDISPLAY, 0
+//	RJMP	RESDIA
+
+SUMMIN:
+	LDS		R16, U_MIN
+	INC		R16
+	CPI		R16, 10
+	BREQ	CDMIN
+	STS		U_MIN, R16
+	RJMP	REGS
+
+CDMIN:
+	CLR		R16
+	STS		U_MIN, R16
+	LDS		R16, D_MIN
+	INC		R16
+	CPI		R16, 6
+	BREQ	REMIN
+	STS		D_MIN, R16
+	RJMP	REGS
+
+REMIN:
+	CLR		R16
+	STS		D_MIN, R16
+	RJMP	REGS
+
+SUMHORA:
+	LDS		R16, D_HORA
+	CPI		R16, 2
+	BREQ	CONTCUA
+	LDS		R16, U_HORA
+	INC		R16
+	CPI		R16, 10
+	BREQ	CDHORA
+	STS		U_HORA, R16
+	RJMP	REGS
+
+CONTCUA:
+	LDS		R16, U_HORA
+	INC		R16
+	CPI		R16, 5
+	BREQ	REHORA
+	STS		U_HORA, R16
+	RJMP	REGS
+
+CDHORA:
+	CLR		R16
+	STS		U_HORA, R16
+	LDS		R16, D_HORA
+	INC		R16
+	STS		D_HORA, R16
+	RJMP	REGS
+
+REHORA:
+	CLR		R16
+	STS		D_HORA, R16
+	STS		U_HORA, R16
+	RJMP	REGS
+
+RESMIN:
+	LDS		R16, U_MIN
+	DEC		R16
+	CPI		R16, 0xFF
+	BREQ	RCDMIN
+	STS		U_MIN, R16
+	RJMP	CER
+
+RCDMIN:
+	LDI		R16, 9
+	STS		U_MIN, R16
+	LDS		R16, D_MIN
+	DEC		R16
+	CPI		R16, 0xFF
+	BREQ	REMIN
+	RJMP	CER
+
+RREMIN:
+	LDI		R16, 6
+	STS		D_MIN, R16
+	RJMP	CER
+
+RESHORA:
+	LDS		R16, D_HORA
+	CPI		R16, 0
+	BREQ	RCONTCUA
+	LDS		R16, U_HORA
+	DEC		R16
+	CPI		R16, 0xFF
+	BREQ	RCDHORA
+	STS		U_HORA, R16
+	RJMP	CER
+
+RCONTCUA:
+	LDS		R16, U_HORA
+	DEC		R16
+	CPI		R16, 0xFF
+	BREQ	RREHORA
+	STS		U_HORA, R16
+	RJMP	CER
+
+RCDHORA:
+	LDI		R16, 9
+	STS		U_HORA, R16
+	LDS		R16, D_HORA
+	DEC		R16
+	STS		D_HORA, R16
+	RJMP	CER
+
+RREHORA:
+	LDI		R16, 2
+	STS		D_HORA, R16
+	LDI		R16, 4
+	STS		U_HORA, R16
+	RJMP	CER
+
+FECHA:
+	SBI		PORTC, PC4
+	CBI		PORTC, PC5
+	LDI		SLIDER, 1
+	LDS		R16, MODOQ
+	CLR		R16
+	STS		MODOQ, R16
+	RJMP	CER
+
+SETFECHA:
+	SBI		PORTC, PC4
+	CBI		PORTC, PC5
+	LDS		R16, MODOQ
+	LDI		R16, 1
+	STS		MODOQ, R16
+	RJMP	MAIN_LOOP
+
+ALARMA: 
+	SBI		PORTC, PC4
+	SBI		PORTC, PC5
+	LDS		R16, MODOQ
+	LDI		R16, 0
+	STS		MODOQ, R16
+	SBI		PORTC, PC5
+	RJMP	MAIN_LOOP
 
 RDISP:
 	LDI     ZL, LOW(DISPLAY << 1)   ; Cargar el byte bajo de la dirección de la tabla
@@ -289,6 +496,19 @@ SU_HORA:
 	LDS		R16, U_DIA
 	CALL	CAR_DISP
 	RJMP	TER
+
+SD_HORA:
+	CBI		PORTB, PB0
+	CBI		PORTB, PB2
+	CBI		PORTB, PB3
+	CBI		PORTB, PB4
+	SBI		PORTB, PB4
+	SBRS	SLIDER, 0
+	LDS		R16, D_HORA
+	SBRC	SLIDER, 0
+	LDS		R16, D_DIA
+	CALL	CAR_DISP
+	RJMP	CUAR
 
 
 // CARGAR EL VALOR DEL DISPLAY
@@ -490,7 +710,6 @@ UMESFD:
 			
 			
 
-
 // SE ACTIVA CON UN OVERFLOW
 TMR0_ISR:
 	LDS		CTIMERS, TIEMPOR
@@ -535,30 +754,49 @@ REINICIO:
 	RETI
 
 BOTON1:							;Funcionamiento para boton 1
-	//CPI		MODO, 1				;Se activa si estamos en modo config hora
-	//BREQ	SUMA_HORA
-	//CPI		MODO, 3				;Se activa si estamos en modo config fecha
-	//BREQ	SUMA_FECHA
-	//CPI		MODO, 4
-	//BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
+	CPI		MODO, 1				;Se activa si estamos en modo config hora
+	BREQ	SUMA
+	CPI		MODO, 3				;Se activa si estamos en modo config fecha
+	BREQ	SUMA
+	CPI		MODO, 4
+	BREQ	SUMA			;Se activa si estamos en modo config alarma
 	RETI
+
+SUMA:
+	LDS		R16, ACTISUM
+	INC		R16
+	STS		ACTISUM, R16
+	RETI 
 
 BOTON2:
-	//CPI		MODO, 1
-	//BREQ	RESTA_HORA			;Se activa si estamos en modo config hora
-	//CPI		MODO, 3
-	//BREQ	RESTA_FECHA			;Se activa si estamos en modo config fecha
-	//CPI		MODO, 4
-	//BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
+	CPI		MODO, 1
+	BREQ	RESTA			;Se activa si estamos en modo config hora
+	CPI		MODO, 3
+	BREQ	RESTA			;Se activa si estamos en modo config fecha
+	CPI		MODO, 4
+	BREQ	RESTA			;Se activa si estamos en modo config alarma
 	RETI
 
+RESTA:
+	LDS		R16, ACTIRES
+	INC		R16
+	STS		ACTIRES, R16
+	RETI 
+
 BOTON3:
-	//CPI		MODO, 1
-	//BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config hora
-	//CPI		MODO, 3
-	//BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config fecha
-	//CPI		MODO, 4
-	//BREQ	RESTA_ALA			;Se activa si estamos en modo config alarma
+	CPI		MODO, 1
+	BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config hora
+	CPI		MODO, 3
+	BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config fecha
+	CPI		MODO, 4
+	BREQ	CAMBIARDISPLAY			;Se activa si estamos en modo config alarma
 	RETI
+
+CAMBIARDISPLAY:
+	LDS		R16, MDISP
+	INC		R16
+	STS		MDISP, R16
+	RETI
+
 
 
