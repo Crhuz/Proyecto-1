@@ -28,6 +28,8 @@ START:
 ; Tabla de valores para el display de 7 segmentos (0-9)
 DISPLAY: 
     .db 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F
+.def	CALEDS = R10
+.def	COMPARAR2 = R11
 .def	STOPALAR = R12
 .def	ALAREN = R13
 .def	COMPARAR = R14
@@ -37,11 +39,10 @@ DISPLAY:
 .def	COUNTER = R19
 .def	SLIDER = R20
 .def	CAMBIADOR = R21
-.def	CALEDS = R22
-.def	CTIMERS = R23
-.def	CTMES = R24
-.def	CVALARM = R25
-.def	HDALARM = R26
+.def	CTIMERS = R22
+.def	CTMES = R23
+.def	CVALARM = R24
+.def	HDALARM = R25
 .dseg    
              
 .org SRAM_START         
@@ -103,8 +104,10 @@ SETUP:
 	CLR		R16
 	MOV		STOPALAR, R16 
 	MOV		ALAREN, R16 
-	MOV		COMPARAR, R16 
+	MOV		COMPARAR, R16
+	MOV		COMPARAR2, R16  
 	MOV		CLEDS, R16 
+	MOV		CALEDS, R16 
     LDI     R16, 100
 	STS		TIEMPOR, R16
 
@@ -215,9 +218,9 @@ LALARMA:
 
 // CAMBIADORES DE LEDS DE DISPLAYS
 LEDC:
-	SBRC	HDALARM, 0
+	SBRC	HDALARM, 0				; revisamos que modo queremos usar
 	CALL	LE1
-	SBRS	HDALARM, 0
+	SBRS	HDALARM, 0				; Si Hdalarm es 1 los leds trabajaran mas rapido y se podra entrar a la interrupcion de alarma
 	CALL	LE2
 	RET
 
@@ -249,8 +252,8 @@ HORA_MIN:
 	LDS		R16, MODOQ
 	CLR		R16
 	STS		MODOQ, R16
-	LDI		SLIDER, 0
-	LDI		CVALARM, 0 
+	LDI		SLIDER, 0				; slider en 0 para indicar que vamos a horas
+	LDI		CVALARM, 0				; apagamos alarma para evitar problemas al cambiar
 CER:								; Tiene separaciones para que cada revision se haga sin ningun problema y no se conflicte
 	CPI		CAMBIADOR, 0
 	BREQ	LSU_MIN
@@ -267,11 +270,10 @@ CUAR:
 	LDS		R16, MODOQ
 	CPI		R16, 1
 	BREQ	LMAIN_LOOP
-	MOV		R16, HDALARM
-	CPI		R16, 1
+	CPI		HDALARM, 1				; revisamos si alarma esta encendida para revisar si tenemos que activarla
 	BREQ	RUALARM
 RTIEMP:
-	CPI		TIEMPO, 100
+	CPI		TIEMPO, 100				 ;esperamos que tiempo sea 100 para cumplir un segundo y despues reiniciarlo
 	BRNE	LMAIN_LOOP
 	CLR		TIEMPO
 	RJMP	AUMENTAR_VALOR
@@ -290,27 +292,33 @@ LMAIN_LOOP:
 
 // COMPROBAR SI LA HORA DE LA ALARMA LLEGO
 RUALARM:
-	LDS		R16, D_HORA				// COMPROBAR SI LA DECENA DE HORA ES LA CORRECTA
+	LDS		COMPARAR2, D_HORA				// COMPROBAR SI LA DECENA DE HORA ES LA CORRECTA
 	LDS		COMPARAR, D_AHORA
-	CP		R16, COMPARAR
+	CP		COMPARAR2, COMPARAR
 	BREQ	PRICOI
 	RJMP	RTIEMP
 PRICOI:
-	LDS		R16, U_HORA				// COMPROBAR SI LA UNIDAD DE HORA ES LA CORRECTA
+	LDS		COMPARAR2, U_HORA				// COMPROBAR SI LA UNIDAD DE HORA ES LA CORRECTA
 	LDS		COMPARAR, U_AHORA
-	CP		R16, COMPARAR
+	CP		COMPARAR2, COMPARAR
 	BREQ	SEGCOI
 	RJMP	RTIEMP
 SEGCOI:
-	LDS		R16, D_MIN			// COMPROBAR SI LA DECENA DE MINUTO ES LA CORRECTA
+	LDS		COMPARAR2, D_MIN			// COMPROBAR SI LA DECENA DE MINUTO ES LA CORRECTA
 	LDS		COMPARAR, D_AMIN
-	CP		R16, COMPARAR
+	CP		COMPARAR2, COMPARAR
 	BREQ	TERCOI
 	RJMP	RTIEMP
 TERCOI:
-	LDS		R16, U_MIN			// COMPROBAR SI LA UNIDAD DE MINUTO ES LA CORRECTA
+	LDS		COMPARAR2, U_MIN			// COMPROBAR SI LA UNIDAD DE MINUTO ES LA CORRECTA
 	LDS		COMPARAR, U_AMIN
-	CP		R16, COMPARAR
+	CP		COMPARAR2, COMPARAR
+	BREQ	CUARCOI
+	RJMP	RTIEMP
+CUARCOI:
+	LDS		COMPARAR2, U_MIN			// COMPROBAR SI LA UNIDAD DE MINUTO ES LA CORRECTA
+	LDS		COMPARAR, U_AMIN
+	CP		COMPARAR2, COMPARAR
 	BREQ	PARAR
 	RJMP	RTIEMP
 
@@ -326,11 +334,10 @@ PARAR:
 SALIR:
 	CLR		R16					// SE PRESIONO EL BOTON Y REGRESAMOS A LA NORMALIDAD
 	MOV		STOPALAR, R16
-	MOV		HDALARM, R16
+	CLR		HDALARM
 	CBI		PORTB, PB5
-	LDS		R16, U_MIN
-	INC		R16
-	STS		U_MIN, R16
+	CLR		R16
+	MOV		ALAREN, R16
 	RJMP	RTIEMP
 
 // SEGUNDO MODO DE FUNCIONAMIENTO, CAMBIAR HORA Y FECHA
@@ -342,6 +349,7 @@ SETHORA:
 	CBI		PORTC, PC5
 	LDI		SLIDER, 0 
 	LDI		CVALARM, 0		; Desactivar guardar registros en alarma
+	CLR		HDALARM     	; Apagara el modo encendido de la alarma
 
 COMUN:
 	LDS		R16, MODOQ		; Deshabilitar Suma
@@ -371,11 +379,11 @@ MAINSD1:
 	RJMP    MAIN_LOOP
 
 MAINRD1:
-	LDS		R16, ACTIRES	;REINICIAR ACTIVADOR DE RESTA
+	LDS		R16, ACTIRES	; REINICIAR ACTIVADOR DE RESTA
 	CLR		R16				
 	STS		ACTIRES, R16
 
-	CPI		SLIDER, 0
+	CPI		SLIDER, 0		; con ayuda del slider sabremos si venimos de fecha o hora para cambiar el respectivo de cada uno
 	BREQ	COMRH
 	CPI		SLIDER, 1
 	BREQ	COMRM
@@ -480,7 +488,7 @@ CONTCUA:
     SBRC    CVALARM, 0
     LDS     R16, U_AHORA
     INC     R16
-    CPI     R16, 5
+    CPI     R16, 4
     BREQ    REHORA
     SBRC    CVALARM, 0
     STS     U_AHORA, R16
@@ -617,7 +625,7 @@ RREHORA:
     STS     D_AHORA, R16
     SBRS    CVALARM, 0
     STS     D_HORA, R16
-    LDI     R16, 4
+    LDI     R16, 3
     SBRC    CVALARM, 0
     STS     U_AHORA, R16
     SBRS    CVALARM, 0
@@ -686,7 +694,7 @@ SELMES:
 	CPI		R16, 9
 	BREQ	TRECERO
 	RJMP	MAIN_LOOP
-FINA:
+FINA:							; revisamos si estamos en meses finales 10, 11 y 12
 	LDS		R16, U_MES
 	CPI		R16, 0
 	BREQ	TREUNO
@@ -793,7 +801,7 @@ AUDDIA:
 	RJMP	REGS
 
 // FUNCIONAMIENTO DE RESTA PARA DIA (TANTO LARGOS, CORTOS Y DICIEMBRE)	
-RESTADIL:
+RESTADIL:					 ;funcion under para meses largos y como se comporta
 	LDS		R16, D_DIA
 	CPI		R16, 0
 	BREQ	INDIAL
@@ -822,7 +830,7 @@ EDIAL:
 	STS		U_DIA, R16
 	RJMP	CER
 
-RESTADIC:
+RESTADIC:						; funcion under para meses cortos y como se comporta
 	LDS		R16, D_DIA
 	CPI		R16, 0
 	BREQ	INDIAC
@@ -848,7 +856,7 @@ EDIAC:
 	STS		U_DIA, R16
 	RJMP	CER
 
-RESTADIFEB:
+RESTADIFEB:						; funcion under para febrero y como se comporta
 	LDS		R16, D_DIA
 	CPI		R16, 0
 	BREQ	INDIAFE
@@ -930,7 +938,9 @@ FECHA:
 	LDS		R16, MODOQ
 	CLR		R16
 	STS		MODOQ, R16
+	CLR		HDALARM     	; Apagara el modo encendido de la alarma
 	RJMP	CER
+
 
 SETFECHA:
 	CBI		PORTC, PC5
@@ -939,10 +949,8 @@ SETFECHA:
 	SBRS	CALEDS, 7
 	CBI		PORTC, PC4
 	LDI		SLIDER, 1 
-	
+	CLR		HDALARM     	; Apagara el modo encendido de la alarma
 	RJMP	COMUN			; PARA AHORRAR LINEAS SE RECICLO EL CODIGO DE SET HORA PERO CON CAMBIO DE PARAMETROS PARA QUE EL CODIGO ENTIENDA QUE SE DEBER SUMINISTRAR MES
-
-	RJMP	MAIN_LOOP
 
 // FUNCIONAMIENTO DE ALARMA
 ALARMA: 
@@ -950,6 +958,7 @@ ALARMA:
 	SBI		PORTC, PC5
 	LDI		CVALARM, 1
 	LDI		SLIDER, 2 
+	CLR		HDALARM     	; Apagara el modo encendido de la alarma
 	RJMP	COMUN
 
 // ENSEÑAR VALORES EN DISPLAY (ULTIMAS LINEAS Y ES NECESARIO USAR LAUNCHERS
@@ -1023,16 +1032,16 @@ MODNOR3:
 
 // CAMBIAR DISPLAY DE HORA
 SD_HORA:
-	CBI		PORTB, PB0
+	CBI		PORTB, PB0				; Apagamos todos los transistores
 	CBI		PORTB, PB2
 	CBI		PORTB, PB3
 	CBI		PORTB, PB4
-	SBI		PORTB, PB4
-	SBRC	CVALARM, 0
+	SBI		PORTB, PB4				; Encendemos el indicado
+	SBRC	CVALARM, 0				; revisamos de que modo venimos y cual se va a cargar al display
 	LDS		R16, D_AHORA
 	SBRS	CVALARM, 0
 	CALL	MODNOR4
-	CALL	CAR_DISP
+	CALL	CAR_DISP				; llamamos a cargar display para mandarlo afuera
 	RJMP	CUAR
 
 MODNOR4:
@@ -1116,7 +1125,7 @@ RDMIN:
 RRAPIDO:
     LDS     R16, U_HORA     
     CPI     R16, 3          
-    BREQ    RDHORA          
+    BRSH    RDHORA          
     INC     R16             
     STS     U_HORA, R16     
     RJMP    MAIN_LOOP       
@@ -1159,14 +1168,14 @@ RDHORA:
 	BREQ	CORTOS
 	RJMP	MAIN_LOOP
 
-FINALES:
+FINALES:							; funcion para revisar ultimos meses 10, 11 y 12
 	LDS		R16, U_MES
 	CPI		R16, 0
 	BREQ	LARGOS
 	CPI		R16, 1
 	BREQ	CORTOS
 	CPI		R16, 2
-	BREQ	DICI
+	BREQ	DICI					; diciembre es especial debido que reiniciamos año
 	RJMP	MAIN_LOOP
 
 	// FUNCIONAMIENTO PARA MESES LARGOS
@@ -1200,26 +1209,27 @@ COMUN1:
 	STS		U_DIA, R16
 	RJMP	MAIN_LOOP
 
-FMESL:
+FMESL:									; funcion para meses largos
 	LDS		R16, U_DIA
 	CPI		R16, 1
 	BREQ	UMESF
-	RJMP	COMUN2
+	RJMP	COMUN2		
 FMESC:
-	LDS		R16, U_DIA
+	LDS		R16, U_DIA					; funcion para meses cortos
 	CPI		R16, 0
 	BREQ	UMESF
 	RJMP	COMUN2
-FMESFEB:
+FMESFEB:								; funcion para febrero
 	LDS		R16, U_DIA
 	CPI		R16, 8
 	BREQ	UMESF
 	RJMP	COMUN2
-FMESDIC:
+FMESDIC:								; funcion para diciembre
 	LDS		R16, U_DIA
 	CPI		R16, 1
 	BREQ	UMESFD
-COMUN2:
+
+COMUN2:										; si no es final de mes todas la funciones de meses caen aca para aumentar r16
 	INC		R16
 	STS		U_DIA, R16
 	RJMP	MAIN_LOOP
@@ -1232,7 +1242,7 @@ UDIA:
 	STS		D_DIA, R16
 	RJMP	MAIN_LOOP
 
-UMESF:
+UMESF:											; funcion para reiniciar mes
 	LDI		R16, 1
 	STS		U_DIA, R16
 	CLR		R16
@@ -1242,7 +1252,7 @@ UMESF:
 	STS		U_MES, R16
 	RJMP	MAIN_LOOP
 
-UMESFD:
+UMESFD:											; si es diciembre y estamos cambiando de mes volvemos a 1 de enero
 	CLR		R16
 	STS		D_MES, R16
 	STS		D_DIA, R16
@@ -1254,15 +1264,15 @@ UMESFD:
 // FUNCIONAMIENTO DE INTERRUPCIONES			
 // SE ACTIVA CON UN OVERFLOW
 TMR0_ISR:
-	LDS		CTIMERS, TIEMPOR
+	LDS		CTIMERS, TIEMPOR				; cada 10 ms se aumenta tiempo para medir segundos y por consiguiente minutos horas y meses
     OUT     TCNT0, CTIMERS
     INC     TIEMPO
 	INC		CLEDS
     RETI
 
 TMR2_ISR:
-	INC		CAMBIADOR
-	CPI		CAMBIADOR, 4
+	INC		CAMBIADOR					; aumentamos el valor de cambiador para cambiar el display que se va a enseñar
+	CPI		CAMBIADOR, 4				
 	BREQ	RCAMBIADOR
 SIGUE:
 	INC		CALEDS
@@ -1274,7 +1284,7 @@ RCAMBIADOR:
 
 // SE ACTIVA AL PRECIONAR UN BOTON
 PCINT_ISR:
-	SBIS    PINC, PC3   
+	SBIS    PINC, PC3			; revisamos que boton se presiono y en que modo estamos
     RJMP    CAMBIO      
     SBIS    PINC, PC2   
     RJMP    BOTON3
@@ -1299,7 +1309,7 @@ BOTON1:							;Funcionamiento para boton 1
 	BREQ	APALA
 	CPI		MODO, 1				;Se activa si estamos en modo config hora
 	BREQ	SUMA
-	CPI		MODO, 2				;Se activa si estamos en modo config hora
+	CPI		MODO, 2				
 	BREQ	APALA
 	CPI		MODO, 3				;Se activa si estamos en modo config fecha
 	BREQ	SUMA
@@ -1308,7 +1318,7 @@ BOTON1:							;Funcionamiento para boton 1
 	RETI
 
 APALA:
-	MOV		R16, ALAREN
+	MOV		R16, ALAREN			; cuando la alarma este encendida se presiona este boton para apagarla
 	CPI		R16, 1
 	BREQ	APAGARALAR
 	RETI
@@ -1354,16 +1364,16 @@ BOTON3:
 	RETI
 
 HABIALAR:
-	INC		HDALARM
+	INC		HDALARM				; cuando sea necesario se permite habilitar la alarma
 	CPI		HDALARM, 2
-	BREQ	REALR
+	BREQ	REALR				; se lanza una bandera para indicar cuando queremos que suene la alarma
 	RETI
 REALR:
 	CLR		HDALARM
 	RETI	
 
 CAMBIARDISPLAY:
-	LDS		R16, MDISP
+	LDS		R16, MDISP			; cambiamos entre los pares de display para los modos de configurar
 	INC		R16
 	STS		MDISP, R16
 	RETI

@@ -1,9 +1,8 @@
 
-AVRASM ver. 2.2.8  C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm Sat Mar 15 20:12:14 2025
+AVRASM ver. 2.2.8  C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm Mon Mar 17 14:10:51 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(7): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
-C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(44): warning: Register r26 already defined by the .DEF directive
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(7): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
                                  
@@ -1042,13 +1041,13 @@ C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(7): Inc
 000000 940c 0022                     JMP     START       
                                  
                                  .org PCI1addr           ; Vector de interrupción de PCINT
-000008 940c 04b2                     JMP     PCINT_ISR   ; Saltar a la rutina de interrupción de PCINT
+000008 940c 04ba                     JMP     PCINT_ISR   ; Saltar a la rutina de interrupción de PCINT
                                  
                                  .org OVF2addr           ; Vector de interrupción por overflow del Timer2
-000012 940c 04ab                     JMP     TMR2_ISR    ; Saltar a la rutina de interrupción del Timer2
+000012 940c 04b3                     JMP     TMR2_ISR    ; Saltar a la rutina de interrupción del Timer2
                                  
                                  .org OVF0addr           ; Vector de interrupción por overflow del Timer0
-000020 940c 04a5                     JMP     TMR0_ISR    ; Saltar a la rutina de interrupción del Timer0
+000020 940c 04ad                     JMP     TMR0_ISR    ; Saltar a la rutina de interrupción del Timer0
                                  
                                  START:
                                      ; Configuración de la pila
@@ -1064,6 +1063,8 @@ C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(7): Inc
 000028 6d66
 000029 077d
 00002a 6f7f                          .db 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F
+                                 .def	CALEDS = R10
+                                 .def	COMPARAR2 = R11
                                  .def	STOPALAR = R12
                                  .def	ALAREN = R13
                                  .def	COMPARAR = R14
@@ -1073,11 +1074,10 @@ C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(7): Inc
                                  .def	COUNTER = R19
                                  .def	SLIDER = R20
                                  .def	CAMBIADOR = R21
-                                 .def	CALEDS = R22
-                                 .def	CTIMERS = R23
-                                 .def	CTMES = R24
-                                 .def	CVALARM = R25
-                                 .def	HDALARM = R26
+                                 .def	CTIMERS = R22
+                                 .def	CTMES = R23
+                                 .def	CVALARM = R24
+                                 .def	HDALARM = R25
                                  .dseg    
                                               
                                  .org SRAM_START         
@@ -1139,1270 +1139,1278 @@ C:\Users\super\OneDrive\Micros\Proyecto-1\Proyecto 1\Proyecto 1\main.asm(7): Inc
 000054 2700                      	CLR		R16
 000055 2ec0                      	MOV		STOPALAR, R16 
 000056 2ed0                      	MOV		ALAREN, R16 
-000057 2ee0                      	MOV		COMPARAR, R16 
-000058 2ef0                      	MOV		CLEDS, R16 
-000059 e604                          LDI     R16, 100
-00005a 9300 010a                 	STS		TIEMPOR, R16
+000057 2ee0                      	MOV		COMPARAR, R16
+000058 2eb0                      	MOV		COMPARAR2, R16  
+000059 2ef0                      	MOV		CLEDS, R16 
+00005a 2ea0                      	MOV		CALEDS, R16 
+00005b e604                          LDI     R16, 100
+00005c 9300 010a                 	STS		TIEMPOR, R16
                                  
-00005c e010                      	LDI		MODO, 0				// INICIAR EL VALOR DEL MODO EN 0
-00005d e020                      	LDI		TIEMPO, 0			// INICIAR EL VALOR DE TIEMPO EN 0
-00005e e050                      	LDI		CAMBIADOR, 0		// INICIAR EL VALOR DE CAMBIADOR EN 0
-00005f e080                      	LDI		CTMES, 0			// INICIAR EL VALOR DE CTMES EN 0
-000060 e0a0                      	LDI		HDALARM, 0			// INICIAR EL VALOR DE HDALARM EN 0
+00005e e010                      	LDI		MODO, 0				// INICIAR EL VALOR DEL MODO EN 0
+00005f e020                      	LDI		TIEMPO, 0			// INICIAR EL VALOR DE TIEMPO EN 0
+000060 e050                      	LDI		CAMBIADOR, 0		// INICIAR EL VALOR DE CAMBIADOR EN 0
+000061 e070                      	LDI		CTMES, 0			// INICIAR EL VALOR DE CTMES EN 0
+000062 e090                      	LDI		HDALARM, 0			// INICIAR EL VALOR DE HDALARM EN 0
                                  
                                  // Habilitar interrupciones
-000061 e800                      	LDI     R16, (1 << CLKPCE)
-000062 9300 0061                 	STS     CLKPR, R16
-000064 e004                          LDI     R16, 0b00000100
-000065 9300 0061                     STS     CLKPR, R16
+000063 e800                      	LDI     R16, (1 << CLKPCE)
+000064 9300 0061                 	STS     CLKPR, R16
+000066 e004                          LDI     R16, 0b00000100
+000067 9300 0061                     STS     CLKPR, R16
                                  
-000067 e003                          LDI     R16, (1<<CS00) | (1<<CS01)  
-000068 bd05                          OUT     TCCR0B, R16
-000069 9100 010a                 	LDS		R16, TIEMPOR
-00006b bd06                          OUT     TCNT0, R16
+000069 e003                          LDI     R16, (1<<CS00) | (1<<CS01)  
+00006a bd05                          OUT     TCCR0B, R16
+00006b 9100 010a                 	LDS		R16, TIEMPOR
+00006d bd06                          OUT     TCNT0, R16
                                  
-00006c e002                      	LDI     R16, (1<<CS21) 
-00006d 9300 00b1                     STS     TCCR2B, R16
+00006e e002                      	LDI     R16, (1<<CS21) 
+00006f 9300 00b1                     STS     TCCR2B, R16
                                  
-00006f e001                      	LDI     R16, (1<<TOIE0)
-000070 9300 006e                     STS     TIMSK0, R16
+000071 e001                      	LDI     R16, (1<<TOIE0)
+000072 9300 006e                     STS     TIMSK0, R16
                                  
-000072 e001                          LDI     R16, (1<<TOIE2)
-000073 9300 0070                     STS     TIMSK2, R16
+000074 e001                          LDI     R16, (1<<TOIE2)
+000075 9300 0070                     STS     TIMSK2, R16
                                  
-000075 e002                      	LDI		R16, (1 << PCIE1)	// Habilita interrupciones en PC 
-000076 9300 0068                 	STS		PCICR, R16
+000077 e002                      	LDI		R16, (1 << PCIE1)	// Habilita interrupciones en PC 
+000078 9300 0068                 	STS		PCICR, R16
                                  
-000078 e00f                      	LDI		R16, (1 << PCINT8) | (1 << PCINT9) | (1 << PCINT10) | (1 << PCINT11) // Habilita interrupciones en PC0 , PC1 , PC2 ,PC3
-000079 9300 006c                 	STS		PCMSK1, R16
+00007a e00f                      	LDI		R16, (1 << PCINT8) | (1 << PCINT9) | (1 << PCINT10) | (1 << PCINT11) // Habilita interrupciones en PC0 , PC1 , PC2 ,PC3
+00007b 9300 006c                 	STS		PCMSK1, R16
                                  
                                  // DISPLAY
-00007b ef0f                      	LDI		R16, 0xFF
-00007c b90a                      	OUT		DDRD, R16
-00007d e000                      	LDI		R16, 0x00
-00007e b90b                      	OUT		PORTD, R16
+00007d ef0f                      	LDI		R16, 0xFF
+00007e b90a                      	OUT		DDRD, R16
+00007f e000                      	LDI		R16, 0x00
+000080 b90b                      	OUT		PORTD, R16
                                  
                                  // LED RGB
-00007f 9a3c                      	SBI		DDRC, PC4
-000080 9844                      	CBI		PORTC, PC4
-000081 9a3d                      	SBI		DDRC, PC5
-000082 9845                      	CBI		PORTC, PC5
+000081 9a3c                      	SBI		DDRC, PC4
+000082 9844                      	CBI		PORTC, PC4
+000083 9a3d                      	SBI		DDRC, PC5
+000084 9845                      	CBI		PORTC, PC5
                                  
                                  // BOTONES
-000083 9838                      	CBI		DDRC, PC0 ; AUMENTAR VALOR
-000084 9a40                      	SBI		PORTC, PC0 ; PULL-UP
-000085 9839                      	CBI		DDRC, PC1 ; DISMINUIR VALOR
-000086 9a41                      	SBI		PORTC, PC1 ; PULL-UP
-000087 983a                      	CBI		DDRC, PC2 ; SELECCIONADOR DE DISPLAYS
-000088 9a42                      	SBI		PORTC, PC2 ; PULL-UP
-000089 983b                      	CBI		DDRC, PC3 ; CAMBIO DE MODO
-00008a 9a43                      	SBI		PORTC, PC3 ; PULL-UP
+000085 9838                      	CBI		DDRC, PC0 ; AUMENTAR VALOR
+000086 9a40                      	SBI		PORTC, PC0 ; PULL-UP
+000087 9839                      	CBI		DDRC, PC1 ; DISMINUIR VALOR
+000088 9a41                      	SBI		PORTC, PC1 ; PULL-UP
+000089 983a                      	CBI		DDRC, PC2 ; SELECCIONADOR DE DISPLAYS
+00008a 9a42                      	SBI		PORTC, PC2 ; PULL-UP
+00008b 983b                      	CBI		DDRC, PC3 ; CAMBIO DE MODO
+00008c 9a43                      	SBI		PORTC, PC3 ; PULL-UP
                                  
                                  // TRANSISTORES
-00008b 9a20                      	SBI		DDRB, PB0
-00008c 9a28                      	SBI		PORTB, PB0
-00008d 9a22                      	SBI		DDRB, PB2
-00008e 9a2a                      	SBI		PORTB, PB2
-00008f 9a23                      	SBI		DDRB, PB3
-000090 9a2b                      	SBI		PORTB, PB3
-000091 9a24                      	SBI		DDRB, PB4
-000092 9a2c                      	SBI		PORTB, PB4
+00008d 9a20                      	SBI		DDRB, PB0
+00008e 9a28                      	SBI		PORTB, PB0
+00008f 9a22                      	SBI		DDRB, PB2
+000090 9a2a                      	SBI		PORTB, PB2
+000091 9a23                      	SBI		DDRB, PB3
+000092 9a2b                      	SBI		PORTB, PB3
+000093 9a24                      	SBI		DDRB, PB4
+000094 9a2c                      	SBI		PORTB, PB4
                                  
                                  // LEDS SEPARADORES DE DISPLAY
-000093 9a21                      	SBI		DDRB, PB1
-000094 9829                      	CBI		PORTB, PB1
+000095 9a21                      	SBI		DDRB, PB1
+000096 9829                      	CBI		PORTB, PB1
                                  
                                  // BUZZER
-000095 9a25                      	SBI		DDRB, PB5
-000096 982d                      	CBI		PORTB, PB5
+000097 9a25                      	SBI		DDRB, PB5
+000098 982d                      	CBI		PORTB, PB5
                                  
                                  // INICIALIZAR DISPLAY
-000097 9104                      	LPM		R16, Z
-000098 b90b                      	OUT		PORTD, R16
+000099 9104                      	LPM		R16, Z
+00009a b90b                      	OUT		PORTD, R16
                                  
-000099 9478                      SEI				// Habilitar interrupciones
+00009b 9478                      SEI				// Habilitar interrupciones
                                  
                                  // MAIN LOOP
                                  MAIN_LOOP:
-00009a 940e 00ab                 	CALL	LEDC
-00009c 3010                      	CPI		MODO, 0
-00009d f111                      	BREQ	HORA_MIN
-00009e 3011                      	CPI		MODO, 1
-00009f f039                      	BREQ	LSETHORA
-0000a0 3012                      	CPI		MODO, 2
-0000a1 f031                      	BREQ	LFECHA
-0000a2 3013                      	CPI		MODO, 3
-0000a3 f029                      	BREQ	LSETFECHA
-0000a4 3014                      	CPI		MODO, 4
-0000a5 f021                      	BREQ	LALARMA
-0000a6 cff3                      	RJMP    MAIN_LOOP
+00009c 940e 00ad                 	CALL	LEDC
+00009e 3010                      	CPI		MODO, 0
+00009f f111                      	BREQ	HORA_MIN
+0000a0 3011                      	CPI		MODO, 1
+0000a1 f039                      	BREQ	LSETHORA
+0000a2 3012                      	CPI		MODO, 2
+0000a3 f031                      	BREQ	LFECHA
+0000a4 3013                      	CPI		MODO, 3
+0000a5 f029                      	BREQ	LSETFECHA
+0000a6 3014                      	CPI		MODO, 4
+0000a7 f021                      	BREQ	LALARMA
+0000a8 cff3                      	RJMP    MAIN_LOOP
                                  
                                  // LAUNCHERS A FUNCIONES DEMASIADO LEJOS PARA BREQ
                                  LSETHORA:
-0000a7 c066                      	RJMP	SETHORA
+0000a9 c069                      	RJMP	SETHORA
                                  LFECHA:
-0000a8 c2c4                      	RJMP	FECHA
+0000aa c2c8                      	RJMP	FECHA
                                  
                                  LSETFECHA:
-0000a9 c2cd                      	RJMP	SETFECHA
+0000ab c2d2                      	RJMP	SETFECHA
                                  
                                  LALARMA:
-0000aa c2d4                      	RJMP	ALARMA
+0000ac c2d9                      	RJMP	ALARMA
                                  
                                  // CAMBIADORES DE LEDS DE DISPLAYS
                                  LEDC:
-0000ab fda0                      	SBRC	HDALARM, 0
-0000ac 940e 00b2                 	CALL	LE1
-0000ae ffa0                      	SBRS	HDALARM, 0
-0000af 940e 00b7                 	CALL	LE2
-0000b1 9508                      	RET
+0000ad fd90                      	SBRC	HDALARM, 0
+0000ae 940e 00b4                 	CALL	LE1
+0000b0 ff90                      	SBRS	HDALARM, 0
+0000b1 940e 00b9                 	CALL	LE2
+0000b3 9508                      	RET
                                  
                                  LE1:
-0000b2 ff67                      	SBRS	CALEDS, 7
-0000b3 c008                      	RJMP	ON
-0000b4 fd67                      	SBRC	CALEDS, 7
-0000b5 c008                      	RJMP	OFF
-0000b6 9508                      	RET
+0000b4 fea7                      	SBRS	CALEDS, 7
+0000b5 c008                      	RJMP	ON
+0000b6 fca7                      	SBRC	CALEDS, 7
+0000b7 c008                      	RJMP	OFF
+0000b8 9508                      	RET
                                  
                                  LE2:
-0000b7 fef6                      	SBRS	CLEDS, 6
-0000b8 c003                      	RJMP	ON
-0000b9 fcf6                      	SBRC	CLEDS, 6
-0000ba c003                      	RJMP	OFF
-0000bb 9508                      	RET
+0000b9 fef6                      	SBRS	CLEDS, 6
+0000ba c003                      	RJMP	ON
+0000bb fcf6                      	SBRC	CLEDS, 6
+0000bc c003                      	RJMP	OFF
+0000bd 9508                      	RET
                                  
                                  ON:
-0000bc 9a29                      	SBI		PORTB, PB1
-0000bd 9508                      	RET
-                                 OFF:
-0000be 9829                      	CBI		PORTB, PB1
+0000be 9a29                      	SBI		PORTB, PB1
 0000bf 9508                      	RET
+                                 OFF:
+0000c0 9829                      	CBI		PORTB, PB1
+0000c1 9508                      	RET
                                  
                                  // PRIMER MODO, ENSEÑAR HORA/MIN
                                  HORA_MIN:
-0000c0 9844                      	CBI		PORTC, PC4
-0000c1 9a45                      	SBI		PORTC, PC5
-0000c2 9100 010e                 	LDS		R16, MODOQ
-0000c4 2700                      	CLR		R16
-0000c5 9300 010e                 	STS		MODOQ, R16
-0000c7 e040                      	LDI		SLIDER, 0
-0000c8 e090                      	LDI		CVALARM, 0 
+0000c2 9844                      	CBI		PORTC, PC4
+0000c3 9a45                      	SBI		PORTC, PC5
+0000c4 9100 010e                 	LDS		R16, MODOQ
+0000c6 2700                      	CLR		R16
+0000c7 9300 010e                 	STS		MODOQ, R16
+0000c9 e040                      	LDI		SLIDER, 0
+0000ca e080                      	LDI		CVALARM, 0 
                                  CER:								; Tiene separaciones para que cada revision se haga sin ningun problema y no se conflicte
-0000c9 3050                      	CPI		CAMBIADOR, 0
-0000ca f089                      	BREQ	LSU_MIN
+0000cb 3050                      	CPI		CAMBIADOR, 0
+0000cc f081                      	BREQ	LSU_MIN
                                  PRI:
-0000cb 3051                      	CPI		CAMBIADOR, 1
-0000cc f081                      	BREQ	LSD_MIN
+0000cd 3051                      	CPI		CAMBIADOR, 1
+0000ce f079                      	BREQ	LSD_MIN
                                  SEG:
-0000cd 3052                      	CPI		CAMBIADOR, 2
-0000ce f079                      	BREQ	LSU_HORA
+0000cf 3052                      	CPI		CAMBIADOR, 2
+0000d0 f071                      	BREQ	LSU_HORA
                                  TER:
-0000cf 3053                      	CPI		CAMBIADOR, 3
-0000d0 f071                      	BREQ	LSD_HORA
+0000d1 3053                      	CPI		CAMBIADOR, 3
+0000d2 f069                      	BREQ	LSD_HORA
                                  CUAR:
-0000d1 9100 010e                 	LDS		R16, MODOQ
-0000d3 3001                      	CPI		R16, 1
-0000d4 f059                      	BREQ	LMAIN_LOOP
-0000d5 2f0a                      	MOV		R16, HDALARM
-0000d6 3001                      	CPI		R16, 1
-0000d7 f049                      	BREQ	RUALARM
+0000d3 9100 010e                 	LDS		R16, MODOQ
+0000d5 3001                      	CPI		R16, 1
+0000d6 f051                      	BREQ	LMAIN_LOOP
+0000d7 3091                      	CPI		HDALARM, 1
+0000d8 f049                      	BREQ	RUALARM
                                  RTIEMP:
-0000d8 3624                      	CPI		TIEMPO, 100
-0000d9 f431                      	BRNE	LMAIN_LOOP
-0000da 2722                      	CLR		TIEMPO
-0000db c307                      	RJMP	AUMENTAR_VALOR
+0000d9 3624                      	CPI		TIEMPO, 100
+0000da f431                      	BRNE	LMAIN_LOOP
+0000db 2722                      	CLR		TIEMPO
+0000dc c30e                      	RJMP	AUMENTAR_VALOR
                                  
                                  // MAS LAUNCHERS PARA ENSEÑAR DISPLAY
                                  LSU_MIN:
-0000dc c2aa                      	RJMP	SU_MIN
+0000dd c2b1                      	RJMP	SU_MIN
                                  LSD_MIN:
-0000dd c2be                      	RJMP	SD_MIN
+0000de c2c5                      	RJMP	SD_MIN
                                  LSU_HORA:
-0000de c2d2                      	RJMP	SU_HORA
+0000df c2d9                      	RJMP	SU_HORA
                                  LSD_HORA:
-0000df c2e6                      	RJMP	SD_HORA
+0000e0 c2ed                      	RJMP	SD_HORA
                                  LMAIN_LOOP:
-0000e0 cfb9                      	RJMP	MAIN_LOOP
+0000e1 cfba                      	RJMP	MAIN_LOOP
                                  
                                  // COMPROBAR SI LA HORA DE LA ALARMA LLEGO
                                  RUALARM:
-0000e1 9100 0105                 	LDS		R16, D_HORA				// COMPROBAR SI LA DECENA DE HORA ES LA CORRECTA
-0000e3 90e0 0112                 	LDS		COMPARAR, D_AHORA
-0000e5 150e                      	CP		R16, COMPARAR
-0000e6 f009                      	BREQ	PRICOI
-0000e7 cff0                      	RJMP	RTIEMP
+0000e2 90b0 0105                 	LDS		COMPARAR2, D_HORA				// COMPROBAR SI LA DECENA DE HORA ES LA CORRECTA
+0000e4 90e0 0112                 	LDS		COMPARAR, D_AHORA
+0000e6 14be                      	CP		COMPARAR2, COMPARAR
+0000e7 f009                      	BREQ	PRICOI
+0000e8 cff0                      	RJMP	RTIEMP
                                  PRICOI:
-0000e8 9100 0104                 	LDS		R16, U_HORA				// COMPROBAR SI LA UNIDAD DE HORA ES LA CORRECTA
-0000ea 90e0 0111                 	LDS		COMPARAR, U_AHORA
-0000ec 150e                      	CP		R16, COMPARAR
-0000ed f009                      	BREQ	SEGCOI
-0000ee cfe9                      	RJMP	RTIEMP
+0000e9 90b0 0104                 	LDS		COMPARAR2, U_HORA				// COMPROBAR SI LA UNIDAD DE HORA ES LA CORRECTA
+0000eb 90e0 0111                 	LDS		COMPARAR, U_AHORA
+0000ed 14be                      	CP		COMPARAR2, COMPARAR
+0000ee f009                      	BREQ	SEGCOI
+0000ef cfe9                      	RJMP	RTIEMP
                                  SEGCOI:
-0000ef 9100 0103                 	LDS		R16, D_MIN			// COMPROBAR SI LA DECENA DE MINUTO ES LA CORRECTA
-0000f1 90e0 0110                 	LDS		COMPARAR, D_AMIN
-0000f3 150e                      	CP		R16, COMPARAR
-0000f4 f009                      	BREQ	TERCOI
-0000f5 cfe2                      	RJMP	RTIEMP
+0000f0 90b0 0103                 	LDS		COMPARAR2, D_MIN			// COMPROBAR SI LA DECENA DE MINUTO ES LA CORRECTA
+0000f2 90e0 0110                 	LDS		COMPARAR, D_AMIN
+0000f4 14be                      	CP		COMPARAR2, COMPARAR
+0000f5 f009                      	BREQ	TERCOI
+0000f6 cfe2                      	RJMP	RTIEMP
                                  TERCOI:
-0000f6 9100 0102                 	LDS		R16, U_MIN			// COMPROBAR SI LA UNIDAD DE MINUTO ES LA CORRECTA
-0000f8 90e0 010f                 	LDS		COMPARAR, U_AMIN
-0000fa 150e                      	CP		R16, COMPARAR
-0000fb f009                      	BREQ	PARAR
-0000fc cfdb                      	RJMP	RTIEMP
+0000f7 90b0 0102                 	LDS		COMPARAR2, U_MIN			// COMPROBAR SI LA UNIDAD DE MINUTO ES LA CORRECTA
+0000f9 90e0 010f                 	LDS		COMPARAR, U_AMIN
+0000fb 14be                      	CP		COMPARAR2, COMPARAR
+0000fc f009                      	BREQ	CUARCOI
+0000fd cfdb                      	RJMP	RTIEMP
+                                 CUARCOI:
+0000fe 90b0 0102                 	LDS		COMPARAR2, U_MIN			// COMPROBAR SI LA UNIDAD DE MINUTO ES LA CORRECTA
+000100 90e0 010f                 	LDS		COMPARAR, U_AMIN
+000102 14be                      	CP		COMPARAR2, COMPARAR
+000103 f009                      	BREQ	PARAR
+000104 cfd4                      	RJMP	RTIEMP
                                  
                                  PARAR:
-0000fd 9a2d                      	SBI		PORTB, PB5			// NOS QUEDAMOS AQUI HASTA QUE SE PRESIONE EL BOTON
-0000fe e001                      	LDI		R16, 1
-0000ff 2ed0                      	MOV		ALAREN, R16
-000100 2d0c                      	MOV		R16, STOPALAR
-000101 3001                      	CPI		R16, 1
-000102 f009                      	BREQ	SALIR
-000103 cff9                      	RJMP	PARAR
+000105 9a2d                      	SBI		PORTB, PB5			// NOS QUEDAMOS AQUI HASTA QUE SE PRESIONE EL BOTON
+000106 e001                      	LDI		R16, 1
+000107 2ed0                      	MOV		ALAREN, R16
+000108 2d0c                      	MOV		R16, STOPALAR
+000109 3001                      	CPI		R16, 1
+00010a f009                      	BREQ	SALIR
+00010b cff9                      	RJMP	PARAR
                                  
                                  SALIR:
-000104 2700                      	CLR		R16					// SE PRESIONO EL BOTON Y REGRESAMOS A LA NORMALIDAD
-000105 2ec0                      	MOV		STOPALAR, R16
-000106 2fa0                      	MOV		HDALARM, R16
-000107 982d                      	CBI		PORTB, PB5
-000108 9100 0102                 	LDS		R16, U_MIN
-00010a 9503                      	INC		R16
-00010b 9300 0102                 	STS		U_MIN, R16
-00010d cfca                      	RJMP	RTIEMP
+00010c 2700                      	CLR		R16					// SE PRESIONO EL BOTON Y REGRESAMOS A LA NORMALIDAD
+00010d 2ec0                      	MOV		STOPALAR, R16
+00010e 2799                      	CLR		HDALARM
+00010f 982d                      	CBI		PORTB, PB5
+000110 2700                      	CLR		R16
+000111 2ed0                      	MOV		ALAREN, R16
+000112 cfc6                      	RJMP	RTIEMP
                                  
                                  // SEGUNDO MODO DE FUNCIONAMIENTO, CAMBIAR HORA Y FECHA
                                  SETHORA:
-00010e 9844                      	CBI		PORTC, PC4		; ACTIVAR LEDS Y QUE EL RGB TITILE
-00010f fd67                      	SBRC	CALEDS, 7
-000110 9a45                      	SBI		PORTC, PC5
-000111 ff67                      	SBRS	CALEDS, 7
-000112 9845                      	CBI		PORTC, PC5
-000113 e040                      	LDI		SLIDER, 0 
-000114 e090                      	LDI		CVALARM, 0		; Desactivar guardar registros en alarma
+000113 9844                      	CBI		PORTC, PC4		; ACTIVAR LEDS Y QUE EL RGB TITILE
+000114 fca7                      	SBRC	CALEDS, 7
+000115 9a45                      	SBI		PORTC, PC5
+000116 fea7                      	SBRS	CALEDS, 7
+000117 9845                      	CBI		PORTC, PC5
+000118 e040                      	LDI		SLIDER, 0 
+000119 e080                      	LDI		CVALARM, 0		; Desactivar guardar registros en alarma
+00011a 2799                      	CLR		HDALARM     	; Apagara el modo encendido de la alarma
                                  
                                  COMUN:
-000115 9100 010e                 	LDS		R16, MODOQ		; Deshabilitar Suma
-000117 e001                      	LDI		R16, 1			;
-000118 9300 010e                 	STS		MODOQ, R16		;
+00011b 9100 010e                 	LDS		R16, MODOQ		; Deshabilitar Suma
+00011d e001                      	LDI		R16, 1			;
+00011e 9300 010e                 	STS		MODOQ, R16		;
                                  
-00011a 9100 010c                 	LDS		R16, ACTISUM	; REVISAR SI BANDERA DE SUMA ESTA ACTIVA
-00011c fd00                      	SBRC	R16, 0
-00011d c005                      	RJMP	MAINSD1
+000120 9100 010c                 	LDS		R16, ACTISUM	; REVISAR SI BANDERA DE SUMA ESTA ACTIVA
+000122 fd00                      	SBRC	R16, 0
+000123 c005                      	RJMP	MAINSD1
                                  REGS:
-00011e 9100 010d                 	LDS		R16, ACTIRES	; REVISAR SI BANDERA DE RESTA ESTA ACTIVA
-000120 fd00                      	SBRC	R16, 0
-000121 c00d                      	RJMP	MAINRD1
-000122 cfa6                      	RJMP	CER				; SALTO PARA ENSEÑAR VALOR A DISPLAYS
+000124 9100 010d                 	LDS		R16, ACTIRES	; REVISAR SI BANDERA DE RESTA ESTA ACTIVA
+000126 fd00                      	SBRC	R16, 0
+000127 c00d                      	RJMP	MAINRD1
+000128 cfa2                      	RJMP	CER				; SALTO PARA ENSEÑAR VALOR A DISPLAYS
                                  
                                  MAINSD1:
-000123 9100 010c                 	LDS		R16, ACTISUM	; REINICIAR ACTIVADOR DE SUMA	
-000125 2700                      	CLR		R16
-000126 9300 010c                 	STS		ACTISUM, R16
+000129 9100 010c                 	LDS		R16, ACTISUM	; REINICIAR ACTIVADOR DE SUMA	
+00012b 2700                      	CLR		R16
+00012c 9300 010c                 	STS		ACTISUM, R16
                                  
-000128 3040                      	CPI		SLIDER, 0		; REVISAR DE DONDE VENIMOS Y SI QUEREMOS ENCENCER MES O HORA
-000129 f089                      	BREQ	COMSH
-00012a 3041                      	CPI		SLIDER, 1
-00012b f0d9                      	BREQ	COMSM
-00012c 3042                      	CPI		SLIDER, 2		; REVISAR DE DONDE VENIMOS Y SI QUEREMOS ENCENCER MES O HORA
-00012d f069                      	BREQ	COMSH
-00012e cf6b                      	RJMP    MAIN_LOOP
+00012e 3040                      	CPI		SLIDER, 0		; REVISAR DE DONDE VENIMOS Y SI QUEREMOS ENCENCER MES O HORA
+00012f f089                      	BREQ	COMSH
+000130 3041                      	CPI		SLIDER, 1
+000131 f0d9                      	BREQ	COMSM
+000132 3042                      	CPI		SLIDER, 2		; REVISAR DE DONDE VENIMOS Y SI QUEREMOS ENCENCER MES O HORA
+000133 f069                      	BREQ	COMSH
+000134 cf67                      	RJMP    MAIN_LOOP
                                  
                                  MAINRD1:
-00012f 9100 010d                 	LDS		R16, ACTIRES	;REINICIAR ACTIVADOR DE RESTA
-000131 2700                      	CLR		R16				
-000132 9300 010d                 	STS		ACTIRES, R16
+000135 9100 010d                 	LDS		R16, ACTIRES	;REINICIAR ACTIVADOR DE RESTA
+000137 2700                      	CLR		R16				
+000138 9300 010d                 	STS		ACTIRES, R16
                                  
-000134 3040                      	CPI		SLIDER, 0
-000135 f059                      	BREQ	COMRH
-000136 3041                      	CPI		SLIDER, 1
-000137 f0a9                      	BREQ	COMRM
-000138 3042                      	CPI		SLIDER, 2
-000139 f039                      	BREQ	COMRH
-00013a cf5f                      	RJMP    MAIN_LOOP
+00013a 3040                      	CPI		SLIDER, 0
+00013b f059                      	BREQ	COMRH
+00013c 3041                      	CPI		SLIDER, 1
+00013d f0a9                      	BREQ	COMRM
+00013e 3042                      	CPI		SLIDER, 2
+00013f f039                      	BREQ	COMRH
+000140 cf5b                      	RJMP    MAIN_LOOP
                                  
                                  COMSH:
-00013b 9100 010b                 	LDS		R16, MDISP		; SUMA O RESTA DE HORA
-00013d ff00                      	SBRS	R16, 0
-00013e c014                      	RJMP	SUMMIN
-00013f fd00                      	SBRC	R16, 0
-000140 c041                      	RJMP	SUMHORA
+000141 9100 010b                 	LDS		R16, MDISP		; SUMA O RESTA DE HORA
+000143 ff00                      	SBRS	R16, 0
+000144 c014                      	RJMP	SUMMIN
+000145 fd00                      	SBRC	R16, 0
+000146 c041                      	RJMP	SUMHORA
                                  
                                  COMRH:
-000141 9100 010b                 	LDS		R16, MDISP
-000143 ff00                      	SBRS	R16, 0
-000144 c088                      	RJMP	RESMIN
-000145 fd00                      	SBRC	R16, 0
-000146 c0b5                      	RJMP	RESHORA
+000147 9100 010b                 	LDS		R16, MDISP
+000149 ff00                      	SBRS	R16, 0
+00014a c088                      	RJMP	RESMIN
+00014b fd00                      	SBRC	R16, 0
+00014c c0b5                      	RJMP	RESHORA
                                  
                                  COMSM:
-000147 9100 010b                 	LDS		R16, MDISP		; SUMA O RESTA DE MES
-000149 ff00                      	SBRS	R16, 0
-00014a c0fd                      	RJMP	SUMMES
-00014b fd00                      	SBRC	R16, 0
-00014c c11f                      	RJMP	SUMDIA
+00014d 9100 010b                 	LDS		R16, MDISP		; SUMA O RESTA DE MES
+00014f ff00                      	SBRS	R16, 0
+000150 c0fd                      	RJMP	SUMMES
+000151 fd00                      	SBRC	R16, 0
+000152 c11f                      	RJMP	SUMDIA
                                  
                                  COMRM:
-00014d 9100 010b                 	LDS		R16, MDISP
-00014f ff00                      	SBRS	R16, 0
-000150 c1f6                      	RJMP	RESMES
-000151 fd00                      	SBRC	R16, 0
-000152 c218                      	RJMP	RESDIA
+000153 9100 010b                 	LDS		R16, MDISP
+000155 ff00                      	SBRS	R16, 0
+000156 c1f6                      	RJMP	RESMES
+000157 fd00                      	SBRC	R16, 0
+000158 c218                      	RJMP	RESDIA
                                  
                                  // FUNCIONAMIENTO DE SUMA PARA MINUTOS
                                  SUMMIN:
-000153 ff90                          SBRS    CVALARM, 0
-000154 9100 0102                     LDS     R16, U_MIN
-000156 fd90                          SBRC    CVALARM, 0
-000157 9100 010f                     LDS     R16, U_AMIN
-000159 9503                          INC     R16
-00015a 300a                          CPI     R16, 10
-00015b f039                          BREQ    CDMIN
-00015c fd90                          SBRC    CVALARM, 0
-00015d 9300 010f                     STS     U_AMIN, R16
-00015f ff90                          SBRS    CVALARM, 0
-000160 9300 0102                     STS     U_MIN, R16
-000162 cfbb                          RJMP    REGS
+000159 ff80                          SBRS    CVALARM, 0
+00015a 9100 0102                     LDS     R16, U_MIN
+00015c fd80                          SBRC    CVALARM, 0
+00015d 9100 010f                     LDS     R16, U_AMIN
+00015f 9503                          INC     R16
+000160 300a                          CPI     R16, 10
+000161 f039                          BREQ    CDMIN
+000162 fd80                          SBRC    CVALARM, 0
+000163 9300 010f                     STS     U_AMIN, R16
+000165 ff80                          SBRS    CVALARM, 0
+000166 9300 0102                     STS     U_MIN, R16
+000168 cfbb                          RJMP    REGS
                                  
                                  CDMIN:
-000163 2700                          CLR     R16
-000164 fd90                          SBRC    CVALARM, 0
-000165 9300 010f                     STS     U_AMIN, R16
-000167 ff90                          SBRS    CVALARM, 0
-000168 9300 0102                     STS     U_MIN, R16
-00016a ff90                          SBRS    CVALARM, 0
-00016b 9100 0103                     LDS     R16, D_MIN
-00016d fd90                          SBRC    CVALARM, 0
-00016e 9100 0110                     LDS     R16, D_AMIN
-000170 9503                          INC     R16
-000171 3006                          CPI     R16, 6
-000172 f039                          BREQ    REMIN
-000173 fd90                          SBRC    CVALARM, 0
-000174 9300 0110                     STS     D_AMIN, R16
-000176 ff90                          SBRS    CVALARM, 0
-000177 9300 0103                     STS     D_MIN, R16
-000179 cfa4                          RJMP    REGS
+000169 2700                          CLR     R16
+00016a fd80                          SBRC    CVALARM, 0
+00016b 9300 010f                     STS     U_AMIN, R16
+00016d ff80                          SBRS    CVALARM, 0
+00016e 9300 0102                     STS     U_MIN, R16
+000170 ff80                          SBRS    CVALARM, 0
+000171 9100 0103                     LDS     R16, D_MIN
+000173 fd80                          SBRC    CVALARM, 0
+000174 9100 0110                     LDS     R16, D_AMIN
+000176 9503                          INC     R16
+000177 3006                          CPI     R16, 6
+000178 f039                          BREQ    REMIN
+000179 fd80                          SBRC    CVALARM, 0
+00017a 9300 0110                     STS     D_AMIN, R16
+00017c ff80                          SBRS    CVALARM, 0
+00017d 9300 0103                     STS     D_MIN, R16
+00017f cfa4                          RJMP    REGS
                                  
                                  REMIN:
-00017a 2700                          CLR     R16
-00017b fd90                          SBRC    CVALARM, 0
-00017c 9300 0110                     STS     D_AMIN, R16
-00017e ff90                          SBRS    CVALARM, 0
-00017f 9300 0103                     STS     D_MIN, R16
-000181 cf9c                          RJMP    REGS
+000180 2700                          CLR     R16
+000181 fd80                          SBRC    CVALARM, 0
+000182 9300 0110                     STS     D_AMIN, R16
+000184 ff80                          SBRS    CVALARM, 0
+000185 9300 0103                     STS     D_MIN, R16
+000187 cf9c                          RJMP    REGS
                                  
                                  // FUNCIONAMIENTO DE SUMA PARA HORA
                                  SUMHORA:
-000182 ff90                          SBRS    CVALARM, 0
-000183 9100 0105                     LDS     R16, D_HORA
-000185 fd90                          SBRC    CVALARM, 0
-000186 9100 0112                     LDS     R16, D_AHORA
-000188 3002                          CPI     R16, 2
-000189 f081                          BREQ    CONTCUA
-00018a ff90                          SBRS    CVALARM, 0
-00018b 9100 0104                     LDS     R16, U_HORA
-00018d fd90                          SBRC    CVALARM, 0
-00018e 9100 0111                     LDS     R16, U_AHORA
-000190 9503                          INC     R16
-000191 300a                          CPI     R16, 10
-000192 f0b9                          BREQ    CDHORA
-000193 fd90                          SBRC    CVALARM, 0
-000194 9300 0111                     STS     U_AHORA, R16
-000196 ff90                          SBRS    CVALARM, 0
-000197 9300 0104                     STS     U_HORA, R16
-000199 cf84                          RJMP    REGS
+000188 ff80                          SBRS    CVALARM, 0
+000189 9100 0105                     LDS     R16, D_HORA
+00018b fd80                          SBRC    CVALARM, 0
+00018c 9100 0112                     LDS     R16, D_AHORA
+00018e 3002                          CPI     R16, 2
+00018f f081                          BREQ    CONTCUA
+000190 ff80                          SBRS    CVALARM, 0
+000191 9100 0104                     LDS     R16, U_HORA
+000193 fd80                          SBRC    CVALARM, 0
+000194 9100 0111                     LDS     R16, U_AHORA
+000196 9503                          INC     R16
+000197 300a                          CPI     R16, 10
+000198 f0b9                          BREQ    CDHORA
+000199 fd80                          SBRC    CVALARM, 0
+00019a 9300 0111                     STS     U_AHORA, R16
+00019c ff80                          SBRS    CVALARM, 0
+00019d 9300 0104                     STS     U_HORA, R16
+00019f cf84                          RJMP    REGS
                                  
                                  CONTCUA:
-00019a ff90                          SBRS    CVALARM, 0
-00019b 9100 0104                     LDS     R16, U_HORA
-00019d fd90                          SBRC    CVALARM, 0
-00019e 9100 0111                     LDS     R16, U_AHORA
-0001a0 9503                          INC     R16
-0001a1 3005                          CPI     R16, 5
-0001a2 f0e1                          BREQ    REHORA
-0001a3 fd90                          SBRC    CVALARM, 0
-0001a4 9300 0111                     STS     U_AHORA, R16
-0001a6 ff90                          SBRS    CVALARM, 0
-0001a7 9300 0104                     STS     U_HORA, R16
-0001a9 cf74                          RJMP    REGS
+0001a0 ff80                          SBRS    CVALARM, 0
+0001a1 9100 0104                     LDS     R16, U_HORA
+0001a3 fd80                          SBRC    CVALARM, 0
+0001a4 9100 0111                     LDS     R16, U_AHORA
+0001a6 9503                          INC     R16
+0001a7 3004                          CPI     R16, 4
+0001a8 f0e1                          BREQ    REHORA
+0001a9 fd80                          SBRC    CVALARM, 0
+0001aa 9300 0111                     STS     U_AHORA, R16
+0001ac ff80                          SBRS    CVALARM, 0
+0001ad 9300 0104                     STS     U_HORA, R16
+0001af cf74                          RJMP    REGS
                                  
                                  CDHORA:
-0001aa 2700                          CLR     R16
-0001ab fd90                          SBRC    CVALARM, 0
-0001ac 9300 0111                     STS     U_AHORA, R16
-0001ae ff90                          SBRS    CVALARM, 0
-0001af 9300 0104                     STS     U_HORA, R16
-0001b1 ff90                          SBRS    CVALARM, 0
-0001b2 9100 0105                     LDS     R16, D_HORA
-0001b4 fd90                          SBRC    CVALARM, 0
-0001b5 9100 0112                     LDS     R16, D_AHORA
-0001b7 9503                          INC     R16
-0001b8 ff90                      	SBRS    CVALARM, 0
-0001b9 9300 0105                     STS     D_HORA, R16
-0001bb fd90                      	SBRC    CVALARM, 0
-0001bc 9300 0112                     STS     D_AHORA, R16
-0001be cf5f                          RJMP    REGS
+0001b0 2700                          CLR     R16
+0001b1 fd80                          SBRC    CVALARM, 0
+0001b2 9300 0111                     STS     U_AHORA, R16
+0001b4 ff80                          SBRS    CVALARM, 0
+0001b5 9300 0104                     STS     U_HORA, R16
+0001b7 ff80                          SBRS    CVALARM, 0
+0001b8 9100 0105                     LDS     R16, D_HORA
+0001ba fd80                          SBRC    CVALARM, 0
+0001bb 9100 0112                     LDS     R16, D_AHORA
+0001bd 9503                          INC     R16
+0001be ff80                      	SBRS    CVALARM, 0
+0001bf 9300 0105                     STS     D_HORA, R16
+0001c1 fd80                      	SBRC    CVALARM, 0
+0001c2 9300 0112                     STS     D_AHORA, R16
+0001c4 cf5f                          RJMP    REGS
                                  
                                  REHORA:
-0001bf 2700                          CLR     R16
-0001c0 fd90                          SBRC    CVALARM, 0
-0001c1 9300 0112                     STS     D_AHORA, R16
-0001c3 ff90                          SBRS    CVALARM, 0
-0001c4 9300 0105                     STS     D_HORA, R16
-0001c6 fd90                          SBRC    CVALARM, 0
-0001c7 9300 0111                     STS     U_AHORA, R16
-0001c9 ff90                          SBRS    CVALARM, 0
-0001ca 9300 0104                     STS     U_HORA, R16
-0001cc cf51                          RJMP    REGS
+0001c5 2700                          CLR     R16
+0001c6 fd80                          SBRC    CVALARM, 0
+0001c7 9300 0112                     STS     D_AHORA, R16
+0001c9 ff80                          SBRS    CVALARM, 0
+0001ca 9300 0105                     STS     D_HORA, R16
+0001cc fd80                          SBRC    CVALARM, 0
+0001cd 9300 0111                     STS     U_AHORA, R16
+0001cf ff80                          SBRS    CVALARM, 0
+0001d0 9300 0104                     STS     U_HORA, R16
+0001d2 cf51                          RJMP    REGS
                                  
                                  // FUNCIONAMIENTO DE RESTA PARA MINUTO
                                  RESMIN:
-0001cd ff90                          SBRS    CVALARM, 0
-0001ce 9100 0102                     LDS     R16, U_MIN
-0001d0 fd90                          SBRC    CVALARM, 0
-0001d1 9100 010f                     LDS     R16, U_AMIN
-0001d3 950a                          DEC     R16
-0001d4 3f0f                          CPI     R16, 0xFF
-0001d5 f039                          BREQ    RCDMIN
-0001d6 fd90                          SBRC    CVALARM, 0
-0001d7 9300 010f                     STS     U_AMIN, R16
-0001d9 ff90                          SBRS    CVALARM, 0
-0001da 9300 0102                     STS     U_MIN, R16
-0001dc ceec                          RJMP    CER
+0001d3 ff80                          SBRS    CVALARM, 0
+0001d4 9100 0102                     LDS     R16, U_MIN
+0001d6 fd80                          SBRC    CVALARM, 0
+0001d7 9100 010f                     LDS     R16, U_AMIN
+0001d9 950a                          DEC     R16
+0001da 3f0f                          CPI     R16, 0xFF
+0001db f039                          BREQ    RCDMIN
+0001dc fd80                          SBRC    CVALARM, 0
+0001dd 9300 010f                     STS     U_AMIN, R16
+0001df ff80                          SBRS    CVALARM, 0
+0001e0 9300 0102                     STS     U_MIN, R16
+0001e2 cee8                          RJMP    CER
                                  
                                  RCDMIN:
-0001dd e009                          LDI     R16, 9
-0001de fd90                          SBRC    CVALARM, 0
-0001df 9300 010f                     STS     U_AMIN, R16
-0001e1 ff90                          SBRS    CVALARM, 0
-0001e2 9300 0102                     STS     U_MIN, R16
-0001e4 ff90                          SBRS    CVALARM, 0
-0001e5 9100 0103                     LDS     R16, D_MIN
-0001e7 fd90                          SBRC    CVALARM, 0
-0001e8 9100 0110                     LDS     R16, D_AMIN
-0001ea 950a                          DEC     R16
-0001eb 3f0f                          CPI     R16, 0xFF
-0001ec f039                          BREQ    RREMIN
-0001ed fd90                          SBRC    CVALARM, 0
-0001ee 9300 0110                     STS     D_AMIN, R16
-0001f0 ff90                          SBRS    CVALARM, 0
-0001f1 9300 0103                     STS     D_MIN, R16
-0001f3 ced5                          RJMP    CER
+0001e3 e009                          LDI     R16, 9
+0001e4 fd80                          SBRC    CVALARM, 0
+0001e5 9300 010f                     STS     U_AMIN, R16
+0001e7 ff80                          SBRS    CVALARM, 0
+0001e8 9300 0102                     STS     U_MIN, R16
+0001ea ff80                          SBRS    CVALARM, 0
+0001eb 9100 0103                     LDS     R16, D_MIN
+0001ed fd80                          SBRC    CVALARM, 0
+0001ee 9100 0110                     LDS     R16, D_AMIN
+0001f0 950a                          DEC     R16
+0001f1 3f0f                          CPI     R16, 0xFF
+0001f2 f039                          BREQ    RREMIN
+0001f3 fd80                          SBRC    CVALARM, 0
+0001f4 9300 0110                     STS     D_AMIN, R16
+0001f6 ff80                          SBRS    CVALARM, 0
+0001f7 9300 0103                     STS     D_MIN, R16
+0001f9 ced1                          RJMP    CER
                                  
                                  RREMIN:
-0001f4 e005                          LDI     R16, 5
-0001f5 fd90                          SBRC    CVALARM, 0
-0001f6 9300 0110                     STS     D_AMIN, R16
-0001f8 ff90                          SBRS    CVALARM, 0
-0001f9 9300 0103                     STS     D_MIN, R16
-0001fb cecd                          RJMP    CER
+0001fa e005                          LDI     R16, 5
+0001fb fd80                          SBRC    CVALARM, 0
+0001fc 9300 0110                     STS     D_AMIN, R16
+0001fe ff80                          SBRS    CVALARM, 0
+0001ff 9300 0103                     STS     D_MIN, R16
+000201 cec9                          RJMP    CER
                                  
                                  // FUNCIONAMIENTO DE RESTA PARA HORA
                                  RESHORA:
-0001fc ff90                          SBRS    CVALARM, 0
-0001fd 9100 0105                     LDS     R16, D_HORA
-0001ff fd90                          SBRC    CVALARM, 0
-000200 9100 0112                     LDS     R16, D_AHORA
-000202 3000                          CPI     R16, 0
-000203 f081                          BREQ    RCONTCUA
-000204 ff90                          SBRS    CVALARM, 0
-000205 9100 0104                     LDS     R16, U_HORA
-000207 fd90                          SBRC    CVALARM, 0
-000208 9100 0111                     LDS     R16, U_AHORA
-00020a 950a                          DEC     R16
-00020b 3f0f                          CPI     R16, 0xFF
-00020c f0b9                          BREQ    RCDHORA
-00020d fd90                          SBRC    CVALARM, 0
-00020e 9300 0111                     STS     U_AHORA, R16
-000210 ff90                          SBRS    CVALARM, 0
-000211 9300 0104                     STS     U_HORA, R16
-000213 ceb5                          RJMP    CER
+000202 ff80                          SBRS    CVALARM, 0
+000203 9100 0105                     LDS     R16, D_HORA
+000205 fd80                          SBRC    CVALARM, 0
+000206 9100 0112                     LDS     R16, D_AHORA
+000208 3000                          CPI     R16, 0
+000209 f081                          BREQ    RCONTCUA
+00020a ff80                          SBRS    CVALARM, 0
+00020b 9100 0104                     LDS     R16, U_HORA
+00020d fd80                          SBRC    CVALARM, 0
+00020e 9100 0111                     LDS     R16, U_AHORA
+000210 950a                          DEC     R16
+000211 3f0f                          CPI     R16, 0xFF
+000212 f0b9                          BREQ    RCDHORA
+000213 fd80                          SBRC    CVALARM, 0
+000214 9300 0111                     STS     U_AHORA, R16
+000216 ff80                          SBRS    CVALARM, 0
+000217 9300 0104                     STS     U_HORA, R16
+000219 ceb1                          RJMP    CER
                                  
                                  RCONTCUA:
-000214 ff90                          SBRS    CVALARM, 0
-000215 9100 0104                     LDS     R16, U_HORA
-000217 fd90                          SBRC    CVALARM, 0
-000218 9100 0111                     LDS     R16, U_AHORA
-00021a 950a                          DEC     R16
-00021b 3f0f                          CPI     R16, 0xFF
-00021c f0e1                          BREQ    RREHORA
-00021d fd90                          SBRC    CVALARM, 0
-00021e 9300 0111                     STS     U_AHORA, R16
-000220 ff90                          SBRS    CVALARM, 0
-000221 9300 0104                     STS     U_HORA, R16
-000223 cea5                          RJMP    CER
+00021a ff80                          SBRS    CVALARM, 0
+00021b 9100 0104                     LDS     R16, U_HORA
+00021d fd80                          SBRC    CVALARM, 0
+00021e 9100 0111                     LDS     R16, U_AHORA
+000220 950a                          DEC     R16
+000221 3f0f                          CPI     R16, 0xFF
+000222 f0e1                          BREQ    RREHORA
+000223 fd80                          SBRC    CVALARM, 0
+000224 9300 0111                     STS     U_AHORA, R16
+000226 ff80                          SBRS    CVALARM, 0
+000227 9300 0104                     STS     U_HORA, R16
+000229 cea1                          RJMP    CER
                                  
                                  RCDHORA:
-000224 e009                          LDI     R16, 9
-000225 fd90                          SBRC    CVALARM, 0
-000226 9300 0111                     STS     U_AHORA, R16
-000228 ff90                          SBRS    CVALARM, 0
-000229 9300 0104                     STS     U_HORA, R16
-00022b ff90                          SBRS    CVALARM, 0
-00022c 9100 0105                     LDS     R16, D_HORA
-00022e fd90                          SBRC    CVALARM, 0
-00022f 9100 0112                     LDS     R16, D_AHORA
-000231 950a                          DEC     R16
-000232 ff90                      	SBRS    CVALARM, 0
-000233 9300 0105                     STS     D_HORA, R16
-000235 fd90                      	SBRC    CVALARM, 0
-000236 9300 0112                     STS     D_AHORA, R16
-000238 ce90                          RJMP    CER
+00022a e009                          LDI     R16, 9
+00022b fd80                          SBRC    CVALARM, 0
+00022c 9300 0111                     STS     U_AHORA, R16
+00022e ff80                          SBRS    CVALARM, 0
+00022f 9300 0104                     STS     U_HORA, R16
+000231 ff80                          SBRS    CVALARM, 0
+000232 9100 0105                     LDS     R16, D_HORA
+000234 fd80                          SBRC    CVALARM, 0
+000235 9100 0112                     LDS     R16, D_AHORA
+000237 950a                          DEC     R16
+000238 ff80                      	SBRS    CVALARM, 0
+000239 9300 0105                     STS     D_HORA, R16
+00023b fd80                      	SBRC    CVALARM, 0
+00023c 9300 0112                     STS     D_AHORA, R16
+00023e ce8c                          RJMP    CER
                                  
                                  RREHORA:
-000239 e002                          LDI     R16, 2
-00023a fd90                          SBRC    CVALARM, 0
-00023b 9300 0112                     STS     D_AHORA, R16
-00023d ff90                          SBRS    CVALARM, 0
-00023e 9300 0105                     STS     D_HORA, R16
-000240 e004                          LDI     R16, 4
-000241 fd90                          SBRC    CVALARM, 0
-000242 9300 0111                     STS     U_AHORA, R16
-000244 ff90                          SBRS    CVALARM, 0
-000245 9300 0104                     STS     U_HORA, R16
-000247 ce81                          RJMP    CER
+00023f e002                          LDI     R16, 2
+000240 fd80                          SBRC    CVALARM, 0
+000241 9300 0112                     STS     D_AHORA, R16
+000243 ff80                          SBRS    CVALARM, 0
+000244 9300 0105                     STS     D_HORA, R16
+000246 e003                          LDI     R16, 3
+000247 fd80                          SBRC    CVALARM, 0
+000248 9300 0111                     STS     U_AHORA, R16
+00024a ff80                          SBRS    CVALARM, 0
+00024b 9300 0104                     STS     U_HORA, R16
+00024d ce7d                          RJMP    CER
                                  
                                  // FUNCIONAMIENTO DE SUMA PARA MES
                                  SUMMES:
-000248 9100 0109                 	LDS		R16, D_MES
-00024a 3001                      	CPI		R16, 1
-00024b f041                      	BREQ	MESRR
-00024c 9100 0108                 	LDS		R16, U_MES
-00024e 9503                      	INC		R16
-00024f 300a                      	CPI		R16, 10
-000250 f059                      	BREQ	CLRMES
-000251 9300 0108                 	STS		U_MES, R16
-000253 ceca                      	RJMP	REGS
+00024e 9100 0109                 	LDS		R16, D_MES
+000250 3001                      	CPI		R16, 1
+000251 f041                      	BREQ	MESRR
+000252 9100 0108                 	LDS		R16, U_MES
+000254 9503                      	INC		R16
+000255 300a                      	CPI		R16, 10
+000256 f059                      	BREQ	CLRMES
+000257 9300 0108                 	STS		U_MES, R16
+000259 ceca                      	RJMP	REGS
                                  
                                  MESRR:
-000254 9100 0108                 	LDS		R16, U_MES
-000256 9503                      	INC		R16
-000257 3003                      	CPI		R16, 3
-000258 f061                      	BREQ	CLRLMES
-000259 9300 0108                 	STS		U_MES, R16
-00025b cec2                      	RJMP	REGS
+00025a 9100 0108                 	LDS		R16, U_MES
+00025c 9503                      	INC		R16
+00025d 3003                      	CPI		R16, 3
+00025e f061                      	BREQ	CLRLMES
+00025f 9300 0108                 	STS		U_MES, R16
+000261 cec2                      	RJMP	REGS
                                  
                                  CLRMES:
-00025c 2700                      	CLR		R16
-00025d 9300 0108                 	STS		U_MES, R16
-00025f 9100 0109                 	LDS		R16, D_MES
-000261 9503                      	INC		R16
-000262 9300 0109                 	STS		D_MES, R16
-000264 ceb9                      	RJMP	REGS
+000262 2700                      	CLR		R16
+000263 9300 0108                 	STS		U_MES, R16
+000265 9100 0109                 	LDS		R16, D_MES
+000267 9503                      	INC		R16
+000268 9300 0109                 	STS		D_MES, R16
+00026a ceb9                      	RJMP	REGS
                                  
                                  CLRLMES:
-000265 2700                      	CLR		R16
-000266 9300 0109                 	STS		D_MES, R16
-000268 e001                      	LDI		R16, 1
-000269 9300 0108                 	STS		U_MES, R16
-00026b ceb2                      	RJMP	REGS
+00026b 2700                      	CLR		R16
+00026c 9300 0109                 	STS		D_MES, R16
+00026e e001                      	LDI		R16, 1
+00026f 9300 0108                 	STS		U_MES, R16
+000271 ceb2                      	RJMP	REGS
                                  
                                  // FUNCIONAMIENTO DE SUMA PARA DIA	
                                  SUMDIA:
-00026c 2788                      	CLR		CTMES
+000272 2777                      	CLR		CTMES
                                  SELMES:
-00026d 9100 0109                 	LDS		R16, D_MES
-00026f 3001                      	CPI		R16, 1
-000270 f0a9                      	BREQ	FINA      
-000271 9100 0108                 	LDS		R16, U_MES		; REVISAMOS EN QUE MES ESTAMOS Y ASI DECIDIMOS CUANTOS DIAS TENDRA
-000273 3001                      	CPI		R16, 1
-000274 f0d1                      	BREQ	TREUNO
-000275 3002                      	CPI		R16, 2
-000276 f111                      	BREQ	VEINTE8
-000277 3003                      	CPI		R16, 3
-000278 f0b1                      	BREQ	TREUNO
-000279 3004                      	CPI		R16, 4
-00027a f0c9                      	BREQ	TRECERO
-00027b 3005                      	CPI		R16, 5
-00027c f091                      	BREQ	TREUNO
-00027d 3006                      	CPI		R16, 6
-00027e f0a9                      	BREQ	TRECERO
-00027f 3007                      	CPI		R16, 7
-000280 f071                      	BREQ	TREUNO
-000281 3008                      	CPI		R16, 8
-000282 f061                      	BREQ	TREUNO
-000283 3009                      	CPI		R16, 9
-000284 f079                      	BREQ	TRECERO
-000285 ce14                      	RJMP	MAIN_LOOP
+000273 9100 0109                 	LDS		R16, D_MES
+000275 3001                      	CPI		R16, 1
+000276 f0a9                      	BREQ	FINA      
+000277 9100 0108                 	LDS		R16, U_MES		; REVISAMOS EN QUE MES ESTAMOS Y ASI DECIDIMOS CUANTOS DIAS TENDRA
+000279 3001                      	CPI		R16, 1
+00027a f0d1                      	BREQ	TREUNO
+00027b 3002                      	CPI		R16, 2
+00027c f111                      	BREQ	VEINTE8
+00027d 3003                      	CPI		R16, 3
+00027e f0b1                      	BREQ	TREUNO
+00027f 3004                      	CPI		R16, 4
+000280 f0c9                      	BREQ	TRECERO
+000281 3005                      	CPI		R16, 5
+000282 f091                      	BREQ	TREUNO
+000283 3006                      	CPI		R16, 6
+000284 f0a9                      	BREQ	TRECERO
+000285 3007                      	CPI		R16, 7
+000286 f071                      	BREQ	TREUNO
+000287 3008                      	CPI		R16, 8
+000288 f061                      	BREQ	TREUNO
+000289 3009                      	CPI		R16, 9
+00028a f079                      	BREQ	TRECERO
+00028b ce10                      	RJMP	MAIN_LOOP
                                  FINA:
-000286 9100 0108                 	LDS		R16, U_MES
-000288 3000                      	CPI		R16, 0
-000289 f029                      	BREQ	TREUNO
-00028a 3001                      	CPI		R16, 1
-00028b f041                      	BREQ	TRECERO
-00028c 3002                      	CPI		R16, 2
-00028d f009                      	BREQ	TREUNO
-00028e ce0b                      	RJMP	MAIN_LOOP
+00028c 9100 0108                 	LDS		R16, U_MES
+00028e 3000                      	CPI		R16, 0
+00028f f029                      	BREQ	TREUNO
+000290 3001                      	CPI		R16, 1
+000291 f041                      	BREQ	TRECERO
+000292 3002                      	CPI		R16, 2
+000293 f009                      	BREQ	TREUNO
+000294 ce07                      	RJMP	MAIN_LOOP
                                  
                                  TREUNO:
-00028f ff80                      	SBRS	CTMES, 0
-000290 c00d                      	RJMP	SUMADIL
-000291 fd80                      	SBRC	CTMES, 0
-000292 c059                      	RJMP	RESTADIL
-000293 ce06                      	RJMP	MAIN_LOOP
+000295 ff70                      	SBRS	CTMES, 0
+000296 c00d                      	RJMP	SUMADIL
+000297 fd70                      	SBRC	CTMES, 0
+000298 c059                      	RJMP	RESTADIL
+000299 ce02                      	RJMP	MAIN_LOOP
                                  
                                  TRECERO:
-000294 ff80                      	SBRS	CTMES, 0
-000295 c023                      	RJMP	SUMADIC
-000296 fd80                      	SBRC	CTMES, 0
-000297 c070                      	RJMP	RESTADIC
-000298 ce01                      	RJMP	MAIN_LOOP
+00029a ff70                      	SBRS	CTMES, 0
+00029b c023                      	RJMP	SUMADIC
+00029c fd70                      	SBRC	CTMES, 0
+00029d c070                      	RJMP	RESTADIC
+00029e cdfd                      	RJMP	MAIN_LOOP
                                  
                                  VEINTE8:
-000299 ff80                      	SBRS	CTMES, 0
-00029a c032                      	RJMP	SUMADIFEB
-00029b fd80                      	SBRC	CTMES, 0
-00029c c086                      	RJMP	RESTADIFEB
-00029d cdfc                      	RJMP	MAIN_LOOP
+00029f ff70                      	SBRS	CTMES, 0
+0002a0 c032                      	RJMP	SUMADIFEB
+0002a1 fd70                      	SBRC	CTMES, 0
+0002a2 c086                      	RJMP	RESTADIFEB
+0002a3 cdf8                      	RJMP	MAIN_LOOP
                                  
                                  // FUNCIONAMIENTO DE SUMA PARA DIA (TANTO LARGOS, CORTOS Y DICIEMBRE)
                                  SUMADIL:
-00029e 9100 0107                 	LDS		R16, D_DIA
-0002a0 3003                      	CPI		R16, 3
-0002a1 f041                      	BREQ	FIDIAL
-0002a2 9100 0106                 	LDS		R16, U_DIA
-0002a4 9503                      	INC		R16
-0002a5 300a                      	CPI		R16, 10
-0002a6 f1e1                      	BREQ	AUDDIA
-0002a7 9300 0106                 	STS		U_DIA, R16
-0002a9 ce74                      	RJMP	REGS
+0002a4 9100 0107                 	LDS		R16, D_DIA
+0002a6 3003                      	CPI		R16, 3
+0002a7 f041                      	BREQ	FIDIAL
+0002a8 9100 0106                 	LDS		R16, U_DIA
+0002aa 9503                      	INC		R16
+0002ab 300a                      	CPI		R16, 10
+0002ac f1e1                      	BREQ	AUDDIA
+0002ad 9300 0106                 	STS		U_DIA, R16
+0002af ce74                      	RJMP	REGS
                                  
                                  FIDIAL:
-0002aa 9100 0106                 	LDS		R16, U_DIA
-0002ac 9503                      	INC		R16
-0002ad 3002                      	CPI		R16, 2
-0002ae f019                      	BREQ	TDIA
-0002af 9300 0106                 	STS		U_DIA, R16
-0002b1 ce6c                      	RJMP	REGS
+0002b0 9100 0106                 	LDS		R16, U_DIA
+0002b2 9503                      	INC		R16
+0002b3 3002                      	CPI		R16, 2
+0002b4 f019                      	BREQ	TDIA
+0002b5 9300 0106                 	STS		U_DIA, R16
+0002b7 ce6c                      	RJMP	REGS
                                  
                                  TDIA:
-0002b2 2700                      	CLR		R16
-0002b3 9300 0107                 	STS		D_DIA, R16
-0002b5 e001                      	LDI		R16, 1
-0002b6 9300 0106                 	STS		U_DIA, R16
-0002b8 ce65                      	RJMP	REGS
+0002b8 2700                      	CLR		R16
+0002b9 9300 0107                 	STS		D_DIA, R16
+0002bb e001                      	LDI		R16, 1
+0002bc 9300 0106                 	STS		U_DIA, R16
+0002be ce65                      	RJMP	REGS
                                  
                                  SUMADIC:
-0002b9 9100 0107                 	LDS		R16, D_DIA
-0002bb 3003                      	CPI		R16, 3
-0002bc f041                      	BREQ	FIDIAC
-0002bd 9100 0106                 	LDS		R16, U_DIA
-0002bf 9503                      	INC		R16
-0002c0 300a                      	CPI		R16, 10
-0002c1 f109                      	BREQ	AUDDIA
-0002c2 9300 0106                 	STS		U_DIA, R16
-0002c4 ce59                      	RJMP	REGS
+0002bf 9100 0107                 	LDS		R16, D_DIA
+0002c1 3003                      	CPI		R16, 3
+0002c2 f041                      	BREQ	FIDIAC
+0002c3 9100 0106                 	LDS		R16, U_DIA
+0002c5 9503                      	INC		R16
+0002c6 300a                      	CPI		R16, 10
+0002c7 f109                      	BREQ	AUDDIA
+0002c8 9300 0106                 	STS		U_DIA, R16
+0002ca ce59                      	RJMP	REGS
                                  
                                  FIDIAC:
-0002c5 9100 0106                 	LDS		R16, U_DIA
-0002c7 9503                      	INC		R16
-0002c8 3001                      	CPI		R16, 1
-0002c9 f740                      	BRSH	TDIA
-0002ca 9300 0106                 	STS		U_DIA, R16
-0002cc ce51                      	RJMP	REGS
+0002cb 9100 0106                 	LDS		R16, U_DIA
+0002cd 9503                      	INC		R16
+0002ce 3001                      	CPI		R16, 1
+0002cf f740                      	BRSH	TDIA
+0002d0 9300 0106                 	STS		U_DIA, R16
+0002d2 ce51                      	RJMP	REGS
                                  
                                  SUMADIFEB:
-0002cd 9100 0107                 	LDS		R16, D_DIA
-0002cf 3002                      	CPI		R16, 2
-0002d0 f051                      	BREQ	FIDIAFE
-0002d1 3003                      	CPI		R16, 3
-0002d2 f2b9                      	BREQ	FIDIAL
-0002d3 9100 0106                 	LDS		R16, U_DIA
-0002d5 9503                      	INC		R16
-0002d6 300a                      	CPI		R16, 10
-0002d7 f059                      	BREQ	AUDDIA
-0002d8 9300 0106                 	STS		U_DIA, R16
-0002da ce43                      	RJMP	REGS
+0002d3 9100 0107                 	LDS		R16, D_DIA
+0002d5 3002                      	CPI		R16, 2
+0002d6 f051                      	BREQ	FIDIAFE
+0002d7 3003                      	CPI		R16, 3
+0002d8 f2b9                      	BREQ	FIDIAL
+0002d9 9100 0106                 	LDS		R16, U_DIA
+0002db 9503                      	INC		R16
+0002dc 300a                      	CPI		R16, 10
+0002dd f059                      	BREQ	AUDDIA
+0002de 9300 0106                 	STS		U_DIA, R16
+0002e0 ce43                      	RJMP	REGS
                                  
                                  FIDIAFE:
-0002db 9100 0106                 	LDS		R16, U_DIA
-0002dd 9503                      	INC		R16
-0002de 3009                      	CPI		R16, 9
-0002df f291                      	BREQ	TDIA
-0002e0 9300 0106                 	STS		U_DIA, R16
-0002e2 ce3b                      	RJMP	REGS
+0002e1 9100 0106                 	LDS		R16, U_DIA
+0002e3 9503                      	INC		R16
+0002e4 3009                      	CPI		R16, 9
+0002e5 f291                      	BREQ	TDIA
+0002e6 9300 0106                 	STS		U_DIA, R16
+0002e8 ce3b                      	RJMP	REGS
                                  
                                  AUDDIA:
-0002e3 2700                      	CLR		R16
-0002e4 9300 0106                 	STS		U_DIA, R16
-0002e6 9100 0107                 	LDS		R16, D_DIA
-0002e8 9503                      	INC		R16
-0002e9 9300 0107                 	STS		D_DIA, R16
-0002eb ce32                      	RJMP	REGS
+0002e9 2700                      	CLR		R16
+0002ea 9300 0106                 	STS		U_DIA, R16
+0002ec 9100 0107                 	LDS		R16, D_DIA
+0002ee 9503                      	INC		R16
+0002ef 9300 0107                 	STS		D_DIA, R16
+0002f1 ce32                      	RJMP	REGS
                                  
                                  // FUNCIONAMIENTO DE RESTA PARA DIA (TANTO LARGOS, CORTOS Y DICIEMBRE)	
                                  RESTADIL:
-0002ec 9100 0107                 	LDS		R16, D_DIA
-0002ee 3000                      	CPI		R16, 0
-0002ef f049                      	BREQ	INDIAL
-0002f0 9100 0106                 	LDS		R16, U_DIA
-0002f2 950a                      	DEC		R16
-0002f3 3f0f                      	CPI		R16, 0xFF
-0002f4 f019                      	BREQ	LREDDIA
-0002f5 9300 0106                 	STS		U_DIA, R16
-0002f7 cdd1                      	RJMP	CER
+0002f2 9100 0107                 	LDS		R16, D_DIA
+0002f4 3000                      	CPI		R16, 0
+0002f5 f049                      	BREQ	INDIAL
+0002f6 9100 0106                 	LDS		R16, U_DIA
+0002f8 950a                      	DEC		R16
+0002f9 3f0f                      	CPI		R16, 0xFF
+0002fa f019                      	BREQ	LREDDIA
+0002fb 9300 0106                 	STS		U_DIA, R16
+0002fd cdcd                      	RJMP	CER
                                  
                                  LREDDIA:
-0002f8 c045                      	RJMP	REDDIA
+0002fe c045                      	RJMP	REDDIA
                                  
                                  INDIAL:
-0002f9 9100 0106                 	LDS		R16, U_DIA
-0002fb 950a                      	DEC		R16
-0002fc 3000                      	CPI		R16, 0
-0002fd f019                      	BREQ	EDIAL
-0002fe 9300 0106                 	STS		U_DIA, R16
-000300 cdc8                      	RJMP	CER
+0002ff 9100 0106                 	LDS		R16, U_DIA
+000301 950a                      	DEC		R16
+000302 3000                      	CPI		R16, 0
+000303 f019                      	BREQ	EDIAL
+000304 9300 0106                 	STS		U_DIA, R16
+000306 cdc4                      	RJMP	CER
                                  
                                  EDIAL:
-000301 e003                      	LDI		R16, 3
-000302 9300 0107                 	STS		D_DIA, R16
-000304 e001                      	LDI		R16, 1
-000305 9300 0106                 	STS		U_DIA, R16
-000307 cdc1                      	RJMP	CER
+000307 e003                      	LDI		R16, 3
+000308 9300 0107                 	STS		D_DIA, R16
+00030a e001                      	LDI		R16, 1
+00030b 9300 0106                 	STS		U_DIA, R16
+00030d cdbd                      	RJMP	CER
                                  
                                  RESTADIC:
-000308 9100 0107                 	LDS		R16, D_DIA
-00030a 3000                      	CPI		R16, 0
-00030b f041                      	BREQ	INDIAC
-00030c 9100 0106                 	LDS		R16, U_DIA
-00030e 950a                      	DEC		R16
-00030f 3000                      	CPI		R16, 0
-000310 f169                      	BREQ	REDDIA
-000311 9300 0106                 	STS		U_DIA, R16
-000313 cdb5                      	RJMP	CER
+00030e 9100 0107                 	LDS		R16, D_DIA
+000310 3000                      	CPI		R16, 0
+000311 f041                      	BREQ	INDIAC
+000312 9100 0106                 	LDS		R16, U_DIA
+000314 950a                      	DEC		R16
+000315 3000                      	CPI		R16, 0
+000316 f169                      	BREQ	REDDIA
+000317 9300 0106                 	STS		U_DIA, R16
+000319 cdb1                      	RJMP	CER
                                  
                                  INDIAC:
-000314 9100 0106                 	LDS		R16, U_DIA
-000316 950a                      	DEC		R16
-000317 3000                      	CPI		R16, 0
-000318 f019                      	BREQ	EDIAC
-000319 9300 0106                 	STS		U_DIA, R16
-00031b cdad                      	RJMP	CER
+00031a 9100 0106                 	LDS		R16, U_DIA
+00031c 950a                      	DEC		R16
+00031d 3000                      	CPI		R16, 0
+00031e f019                      	BREQ	EDIAC
+00031f 9300 0106                 	STS		U_DIA, R16
+000321 cda9                      	RJMP	CER
                                  
                                  EDIAC:
-00031c e003                      	LDI		R16, 3
-00031d 9300 0107                 	STS		D_DIA, R16
-00031f e000                      	LDI		R16, 0
-000320 9300 0106                 	STS		U_DIA, R16
-000322 cda6                      	RJMP	CER
+000322 e003                      	LDI		R16, 3
+000323 9300 0107                 	STS		D_DIA, R16
+000325 e000                      	LDI		R16, 0
+000326 9300 0106                 	STS		U_DIA, R16
+000328 cda2                      	RJMP	CER
                                  
                                  RESTADIFEB:
-000323 9100 0107                 	LDS		R16, D_DIA
-000325 3000                      	CPI		R16, 0
-000326 f041                      	BREQ	INDIAFE
-000327 9100 0106                 	LDS		R16, U_DIA
-000329 950a                      	DEC		R16
-00032a 3000                      	CPI		R16, 0
-00032b f091                      	BREQ	REDDIA
-00032c 9300 0106                 	STS		U_DIA, R16
-00032e cd9a                      	RJMP	CER
+000329 9100 0107                 	LDS		R16, D_DIA
+00032b 3000                      	CPI		R16, 0
+00032c f041                      	BREQ	INDIAFE
+00032d 9100 0106                 	LDS		R16, U_DIA
+00032f 950a                      	DEC		R16
+000330 3000                      	CPI		R16, 0
+000331 f091                      	BREQ	REDDIA
+000332 9300 0106                 	STS		U_DIA, R16
+000334 cd96                      	RJMP	CER
                                  
                                  INDIAFE:
-00032f 9100 0106                 	LDS		R16, U_DIA
-000331 950a                      	DEC		R16
-000332 3000                      	CPI		R16, 0
-000333 f019                      	BREQ	EDIAFE
-000334 9300 0106                 	STS		U_DIA, R16
-000336 cd92                      	RJMP	CER
+000335 9100 0106                 	LDS		R16, U_DIA
+000337 950a                      	DEC		R16
+000338 3000                      	CPI		R16, 0
+000339 f019                      	BREQ	EDIAFE
+00033a 9300 0106                 	STS		U_DIA, R16
+00033c cd8e                      	RJMP	CER
                                  
                                  EDIAFE:
-000337 e002                      	LDI		R16, 2
-000338 9300 0107                 	STS		D_DIA, R16
-00033a e008                      	LDI		R16, 8
-00033b 9300 0106                 	STS		U_DIA, R16
-00033d cd8b                      	RJMP	CER
+00033d e002                      	LDI		R16, 2
+00033e 9300 0107                 	STS		D_DIA, R16
+000340 e008                      	LDI		R16, 8
+000341 9300 0106                 	STS		U_DIA, R16
+000343 cd87                      	RJMP	CER
                                  
                                  REDDIA:
-00033e e009                      	LDI		R16, 9
-00033f 9300 0106                 	STS		U_DIA, R16
-000341 9100 0107                 	LDS		R16, D_DIA
-000343 950a                      	DEC		R16
-000344 9300 0107                 	STS		D_DIA, R16
-000346 cd82                      	RJMP	CER
+000344 e009                      	LDI		R16, 9
+000345 9300 0106                 	STS		U_DIA, R16
+000347 9100 0107                 	LDS		R16, D_DIA
+000349 950a                      	DEC		R16
+00034a 9300 0107                 	STS		D_DIA, R16
+00034c cd7e                      	RJMP	CER
                                  
                                  // FUNCIONAMIENTO DE RESTA PARA MES 
                                  RESMES:
-000347 9100 0109                 	LDS		R16, D_MES
-000349 3000                      	CPI		R16, 0
-00034a f041                      	BREQ	RMESRR
-00034b 9100 0108                 	LDS		R16, U_MES
-00034d 950a                      	DEC		R16
-00034e 3000                      	CPI		R16, 0
-00034f f059                      	BREQ	RCLRMES
-000350 9300 0108                 	STS		U_MES, R16
-000352 cd76                      	RJMP	CER
+00034d 9100 0109                 	LDS		R16, D_MES
+00034f 3000                      	CPI		R16, 0
+000350 f041                      	BREQ	RMESRR
+000351 9100 0108                 	LDS		R16, U_MES
+000353 950a                      	DEC		R16
+000354 3000                      	CPI		R16, 0
+000355 f059                      	BREQ	RCLRMES
+000356 9300 0108                 	STS		U_MES, R16
+000358 cd72                      	RJMP	CER
                                  
                                  RMESRR:
-000353 9100 0108                 	LDS		R16, U_MES
-000355 950a                      	DEC		R16
-000356 3000                      	CPI		R16, 0
-000357 f061                      	BREQ	RCLRLMES
-000358 9300 0108                 	STS		U_MES, R16
-00035a cd6e                      	RJMP	CER
+000359 9100 0108                 	LDS		R16, U_MES
+00035b 950a                      	DEC		R16
+00035c 3000                      	CPI		R16, 0
+00035d f061                      	BREQ	RCLRLMES
+00035e 9300 0108                 	STS		U_MES, R16
+000360 cd6a                      	RJMP	CER
                                  
                                  RCLRMES:
-00035b e009                      	LDI		R16, 9
-00035c 9300 0108                 	STS		U_MES, R16
-00035e 9100 0109                 	LDS		R16, D_MES
-000360 950a                      	DEC		R16
-000361 9300 0109                 	STS		D_MES, R16
-000363 cd65                      	RJMP	CER
+000361 e009                      	LDI		R16, 9
+000362 9300 0108                 	STS		U_MES, R16
+000364 9100 0109                 	LDS		R16, D_MES
+000366 950a                      	DEC		R16
+000367 9300 0109                 	STS		D_MES, R16
+000369 cd61                      	RJMP	CER
                                  
                                  RCLRLMES:
-000364 e001                      	LDI		R16, 1
-000365 9300 0109                 	STS		D_MES, R16
-000367 e002                      	LDI		R16, 2
-000368 9300 0108                 	STS		U_MES, R16
-00036a cd5e                      	RJMP	CER
+00036a e001                      	LDI		R16, 1
+00036b 9300 0109                 	STS		D_MES, R16
+00036d e002                      	LDI		R16, 2
+00036e 9300 0108                 	STS		U_MES, R16
+000370 cd5a                      	RJMP	CER
                                  
                                  RESDIA:
-00036b e081                      	LDI		CTMES, 1
-00036c cf00                      	RJMP	SELMES
+000371 e071                      	LDI		CTMES, 1
+000372 cf00                      	RJMP	SELMES
                                  
                                  // ENSEÑAR MES EN DISPLAYS, AGREGADO CONTROLAR OVERFLOW DE MES Y QUE CONLLEVA
                                  FECHA:
-00036d 9a44                      	SBI		PORTC, PC4
-00036e 9845                      	CBI		PORTC, PC5
-00036f e041                      	LDI		SLIDER, 1
-000370 e090                      	LDI		CVALARM, 0		; Desactivar guardar registros en alarma
-000371 9100 010e                 	LDS		R16, MODOQ
-000373 2700                      	CLR		R16
-000374 9300 010e                 	STS		MODOQ, R16
-000376 cd52                      	RJMP	CER
+000373 9a44                      	SBI		PORTC, PC4
+000374 9845                      	CBI		PORTC, PC5
+000375 e041                      	LDI		SLIDER, 1
+000376 e080                      	LDI		CVALARM, 0		; Desactivar guardar registros en alarma
+000377 9100 010e                 	LDS		R16, MODOQ
+000379 2700                      	CLR		R16
+00037a 9300 010e                 	STS		MODOQ, R16
+00037c 2799                      	CLR		HDALARM     	; Apagara el modo encendido de la alarma
+00037d cd4d                      	RJMP	CER
+                                 
                                  
                                  SETFECHA:
-000377 9845                      	CBI		PORTC, PC5
-000378 fd67                      	SBRC	CALEDS, 7
-000379 9a44                      	SBI		PORTC, PC4
-00037a ff67                      	SBRS	CALEDS, 7
-00037b 9844                      	CBI		PORTC, PC4
-00037c e041                      	LDI		SLIDER, 1 
-                                 	
-00037d cd97                      	RJMP	COMUN			; PARA AHORRAR LINEAS SE RECICLO EL CODIGO DE SET HORA PERO CON CAMBIO DE PARAMETROS PARA QUE EL CODIGO ENTIENDA QUE SE DEBER SUMINISTRAR MES
-                                 
-00037e cd1b                      	RJMP	MAIN_LOOP
+00037e 9845                      	CBI		PORTC, PC5
+00037f fca7                      	SBRC	CALEDS, 7
+000380 9a44                      	SBI		PORTC, PC4
+000381 fea7                      	SBRS	CALEDS, 7
+000382 9844                      	CBI		PORTC, PC4
+000383 e041                      	LDI		SLIDER, 1 
+000384 2799                      	CLR		HDALARM     	; Apagara el modo encendido de la alarma
+000385 cd95                      	RJMP	COMUN			; PARA AHORRAR LINEAS SE RECICLO EL CODIGO DE SET HORA PERO CON CAMBIO DE PARAMETROS PARA QUE EL CODIGO ENTIENDA QUE SE DEBER SUMINISTRAR MES
                                  
                                  // FUNCIONAMIENTO DE ALARMA
                                  ALARMA: 
-00037f 9a44                      	SBI		PORTC, PC4
-000380 9a45                      	SBI		PORTC, PC5
-000381 e091                      	LDI		CVALARM, 1
-000382 e042                      	LDI		SLIDER, 2 
-000383 cd91                      	RJMP	COMUN
+000386 9a44                      	SBI		PORTC, PC4
+000387 9a45                      	SBI		PORTC, PC5
+000388 e081                      	LDI		CVALARM, 1
+000389 e042                      	LDI		SLIDER, 2 
+00038a 2799                      	CLR		HDALARM     	; Apagara el modo encendido de la alarma
+00038b cd8f                      	RJMP	COMUN
                                  
                                  // ENSEÑAR VALORES EN DISPLAY (ULTIMAS LINEAS Y ES NECESARIO USAR LAUNCHERS
                                  RDISP:
-000384 e4ec                      	LDI     ZL, LOW(DISPLAY << 1)   ; Cargar el byte bajo de la dirección de la tabla
-000385 e0f0                          LDI     ZH, HIGH(DISPLAY << 1)  ; Cargar el byte alto de la dirección de la tabla
-000386 9508                      	RET
+00038c e4ec                      	LDI     ZL, LOW(DISPLAY << 1)   ; Cargar el byte bajo de la dirección de la tabla
+00038d e0f0                          LDI     ZH, HIGH(DISPLAY << 1)  ; Cargar el byte alto de la dirección de la tabla
+00038e 9508                      	RET
                                  
                                  // CAMBIAR DISPLAY DE MIN
                                  SU_MIN:
-000387 9828                      	CBI		PORTB, PB0
-000388 982a                      	CBI		PORTB, PB2
-000389 982b                      	CBI		PORTB, PB3
-00038a 982c                      	CBI		PORTB, PB4
-00038b 9a28                      	SBI		PORTB, PB0
-00038c fd90                      	SBRC	CVALARM, 0
-00038d 9100 010f                 	LDS		R16, U_AMIN
-00038f ff90                      	SBRS	CVALARM, 0
-000390 940e 0395                 	CALL	MODNOR1
-000392 940e 03db                 	CALL	CAR_DISP
-000394 cd36                      	RJMP	PRI
+00038f 9828                      	CBI		PORTB, PB0
+000390 982a                      	CBI		PORTB, PB2
+000391 982b                      	CBI		PORTB, PB3
+000392 982c                      	CBI		PORTB, PB4
+000393 9a28                      	SBI		PORTB, PB0
+000394 fd80                      	SBRC	CVALARM, 0
+000395 9100 010f                 	LDS		R16, U_AMIN
+000397 ff80                      	SBRS	CVALARM, 0
+000398 940e 039d                 	CALL	MODNOR1
+00039a 940e 03e3                 	CALL	CAR_DISP
+00039c cd30                      	RJMP	PRI
                                  
                                  MODNOR1:
-000395 ff40                      	SBRS	SLIDER, 0
-000396 9100 0102                 	LDS		R16, U_MIN		; AQUI SE DECIDE SI SE ENSEÑA FECHA, HORA o Alarma CON AYUDA DE "SLIDER" y CVALARM
-000398 fd40                      	SBRC	SLIDER, 0
-000399 9100 0108                 	LDS		R16, U_MES
-00039b 9508                      	RET
+00039d ff40                      	SBRS	SLIDER, 0
+00039e 9100 0102                 	LDS		R16, U_MIN		; AQUI SE DECIDE SI SE ENSEÑA FECHA, HORA o Alarma CON AYUDA DE "SLIDER" y CVALARM
+0003a0 fd40                      	SBRC	SLIDER, 0
+0003a1 9100 0108                 	LDS		R16, U_MES
+0003a3 9508                      	RET
                                  
                                  
                                  // CAMBIAR DISPLAY DE MIN
                                  SD_MIN:
-00039c 9828                      	CBI		PORTB, PB0
-00039d 982a                      	CBI		PORTB, PB2
-00039e 982b                      	CBI		PORTB, PB3
-00039f 982c                      	CBI		PORTB, PB4
-0003a0 9a2a                      	SBI		PORTB, PB2
-0003a1 fd90                      	SBRC	CVALARM, 0
-0003a2 9100 0110                 	LDS		R16, D_AMIN
-0003a4 ff90                      	SBRS	CVALARM, 0
-0003a5 940e 03aa                 	CALL	MODNOR2
-0003a7 940e 03db                 	CALL	CAR_DISP
-0003a9 cd23                      	RJMP	SEG
+0003a4 9828                      	CBI		PORTB, PB0
+0003a5 982a                      	CBI		PORTB, PB2
+0003a6 982b                      	CBI		PORTB, PB3
+0003a7 982c                      	CBI		PORTB, PB4
+0003a8 9a2a                      	SBI		PORTB, PB2
+0003a9 fd80                      	SBRC	CVALARM, 0
+0003aa 9100 0110                 	LDS		R16, D_AMIN
+0003ac ff80                      	SBRS	CVALARM, 0
+0003ad 940e 03b2                 	CALL	MODNOR2
+0003af 940e 03e3                 	CALL	CAR_DISP
+0003b1 cd1d                      	RJMP	SEG
                                  
                                  MODNOR2:
-0003aa ff40                      	SBRS	SLIDER, 0
-0003ab 9100 0103                 	LDS		R16, D_MIN		; AQUI SE DECIDE SI SE ENSEÑA FECHA O HORA CON AYUDA DE "SLIDER"
-0003ad fd40                      	SBRC	SLIDER, 0
-0003ae 9100 0109                 	LDS		R16, D_MES
-0003b0 9508                      	RET
+0003b2 ff40                      	SBRS	SLIDER, 0
+0003b3 9100 0103                 	LDS		R16, D_MIN		; AQUI SE DECIDE SI SE ENSEÑA FECHA O HORA CON AYUDA DE "SLIDER"
+0003b5 fd40                      	SBRC	SLIDER, 0
+0003b6 9100 0109                 	LDS		R16, D_MES
+0003b8 9508                      	RET
                                  	
                                  // CAMBIAR DISPLAY DE HORA
                                  SU_HORA:
-0003b1 9828                      	CBI		PORTB, PB0
-0003b2 982a                      	CBI		PORTB, PB2
-0003b3 982b                      	CBI		PORTB, PB3
-0003b4 982c                      	CBI		PORTB, PB4
-0003b5 9a2b                      	SBI		PORTB, PB3
-0003b6 fd90                      	SBRC	CVALARM, 0
-0003b7 9100 0111                 	LDS		R16, U_AHORA
-0003b9 ff90                      	SBRS	CVALARM, 0
-0003ba 940e 03bf                 	CALL	MODNOR3
-0003bc 940e 03db                 	CALL	CAR_DISP
-0003be cd10                      	RJMP	TER
+0003b9 9828                      	CBI		PORTB, PB0
+0003ba 982a                      	CBI		PORTB, PB2
+0003bb 982b                      	CBI		PORTB, PB3
+0003bc 982c                      	CBI		PORTB, PB4
+0003bd 9a2b                      	SBI		PORTB, PB3
+0003be fd80                      	SBRC	CVALARM, 0
+0003bf 9100 0111                 	LDS		R16, U_AHORA
+0003c1 ff80                      	SBRS	CVALARM, 0
+0003c2 940e 03c7                 	CALL	MODNOR3
+0003c4 940e 03e3                 	CALL	CAR_DISP
+0003c6 cd0a                      	RJMP	TER
                                  MODNOR3:
-0003bf ff40                      	SBRS	SLIDER, 0
-0003c0 9100 0104                 	LDS		R16, U_HORA		; AQUI SE DECIDE SI SE ENSEÑA FECHA O HORA CON AYUDA DE "SLIDER"
-0003c2 fd40                      	SBRC	SLIDER, 0
-0003c3 9100 0106                 	LDS		R16, U_DIA
-0003c5 9508                      	RET
+0003c7 ff40                      	SBRS	SLIDER, 0
+0003c8 9100 0104                 	LDS		R16, U_HORA		; AQUI SE DECIDE SI SE ENSEÑA FECHA O HORA CON AYUDA DE "SLIDER"
+0003ca fd40                      	SBRC	SLIDER, 0
+0003cb 9100 0106                 	LDS		R16, U_DIA
+0003cd 9508                      	RET
                                  
                                  // CAMBIAR DISPLAY DE HORA
                                  SD_HORA:
-0003c6 9828                      	CBI		PORTB, PB0
-0003c7 982a                      	CBI		PORTB, PB2
-0003c8 982b                      	CBI		PORTB, PB3
-0003c9 982c                      	CBI		PORTB, PB4
-0003ca 9a2c                      	SBI		PORTB, PB4
-0003cb fd90                      	SBRC	CVALARM, 0
-0003cc 9100 0112                 	LDS		R16, D_AHORA
-0003ce ff90                      	SBRS	CVALARM, 0
-0003cf 940e 03d4                 	CALL	MODNOR4
-0003d1 940e 03db                 	CALL	CAR_DISP
-0003d3 ccfd                      	RJMP	CUAR
+0003ce 9828                      	CBI		PORTB, PB0
+0003cf 982a                      	CBI		PORTB, PB2
+0003d0 982b                      	CBI		PORTB, PB3
+0003d1 982c                      	CBI		PORTB, PB4
+0003d2 9a2c                      	SBI		PORTB, PB4
+0003d3 fd80                      	SBRC	CVALARM, 0
+0003d4 9100 0112                 	LDS		R16, D_AHORA
+0003d6 ff80                      	SBRS	CVALARM, 0
+0003d7 940e 03dc                 	CALL	MODNOR4
+0003d9 940e 03e3                 	CALL	CAR_DISP
+0003db ccf7                      	RJMP	CUAR
                                  
                                  MODNOR4:
-0003d4 ff40                      	SBRS	SLIDER, 0
-0003d5 9100 0105                 	LDS		R16, D_HORA		; AQUI SE DECIDE SI SE ENSEÑA FECHA O HORA CON AYUDA DE "SLIDER"
-0003d7 fd40                      	SBRC	SLIDER, 0
-0003d8 9100 0107                 	LDS		R16, D_DIA
-0003da 9508                      	RET
+0003dc ff40                      	SBRS	SLIDER, 0
+0003dd 9100 0105                 	LDS		R16, D_HORA		; AQUI SE DECIDE SI SE ENSEÑA FECHA O HORA CON AYUDA DE "SLIDER"
+0003df fd40                      	SBRC	SLIDER, 0
+0003e0 9100 0107                 	LDS		R16, D_DIA
+0003e2 9508                      	RET
                                  
                                  
                                  // CARGAR EL VALOR DEL DISPLAY
                                  CAR_DISP:
                                  	// Sumar la posición al registro Z
-0003db 0fe0                          ADD     ZL, R16      ; Sumar la posición al byte bajo de Z
-0003dc e000                          LDI     R16, 0       ; Cargar 0 en R16
-0003dd 1ff0                          ADC     ZH, R16      ; Sumar el acarreo al byte alto de Z (si hay desbordamiento)
+0003e3 0fe0                          ADD     ZL, R16      ; Sumar la posición al byte bajo de Z
+0003e4 e000                          LDI     R16, 0       ; Cargar 0 en R16
+0003e5 1ff0                          ADC     ZH, R16      ; Sumar el acarreo al byte alto de Z (si hay desbordamiento)
                                      // Cargar el valor de la tabla en R16 usando LPM
-0003de 9104                          LPM     R16, Z       ; Cargar el valor de la tabla en R16
+0003e6 9104                          LPM     R16, Z       ; Cargar el valor de la tabla en R16
                                      // Enviar el valor al display (PORTD)
-0003df b90b                          OUT     PORTD, R16   ; Mostrar el valor en el display
-0003e0 940e 0384                 	CALL	RDISP
-0003e2 9508                      	RET
+0003e7 b90b                          OUT     PORTD, R16   ; Mostrar el valor en el display
+0003e8 940e 038c                 	CALL	RDISP
+0003ea 9508                      	RET
                                  
                                  // AUMENTAR EL VALOR DE LA CUENTA
                                  AUMENTAR_VALOR:
-0003e3 9100 0100                     LDS     R16, U_SEG      
-0003e5 3009                          CPI     R16, 9         
-0003e6 f021                          BREQ    RUSEG           
-0003e7 9503                          INC     R16             
-0003e8 9300 0100                     STS     U_SEG, R16      
-0003ea ccaf                          RJMP    MAIN_LOOP       
+0003eb 9100 0100                     LDS     R16, U_SEG      
+0003ed 3009                          CPI     R16, 9         
+0003ee f021                          BREQ    RUSEG           
+0003ef 9503                          INC     R16             
+0003f0 9300 0100                     STS     U_SEG, R16      
+0003f2 cca9                          RJMP    MAIN_LOOP       
                                  
                                  // AUMENTAR VALOR DE UNIDAD DE SEGUNDO
                                  RUSEG:
-0003eb 2700                          CLR     R16             
-0003ec 9300 0100                     STS     U_SEG, R16      
-0003ee 9100 0101                     LDS     R16, D_SEG      
-0003f0 3005                          CPI     R16, 5          
-0003f1 f021                          BREQ    RDSEG           
-0003f2 9503                          INC     R16             
-0003f3 9300 0101                     STS     D_SEG, R16      
-0003f5 cca4                          RJMP    MAIN_LOOP       
+0003f3 2700                          CLR     R16             
+0003f4 9300 0100                     STS     U_SEG, R16      
+0003f6 9100 0101                     LDS     R16, D_SEG      
+0003f8 3005                          CPI     R16, 5          
+0003f9 f021                          BREQ    RDSEG           
+0003fa 9503                          INC     R16             
+0003fb 9300 0101                     STS     D_SEG, R16      
+0003fd cc9e                          RJMP    MAIN_LOOP       
                                  
                                  // AUMENTAR VALOR DE DECENA DE SEGUNDO
                                  RDSEG:
-0003f6 2700                          CLR     R16             
-0003f7 9300 0101                     STS     D_SEG, R16      
-0003f9 9100 0102                     LDS     R16, U_MIN      
-0003fb 3009                          CPI     R16, 9         
-0003fc f021                          BREQ    RUMIN           
-0003fd 9503                          INC     R16             
-0003fe 9300 0102                     STS     U_MIN, R16      
-000400 cc99                          RJMP    MAIN_LOOP       
+0003fe 2700                          CLR     R16             
+0003ff 9300 0101                     STS     D_SEG, R16      
+000401 9100 0102                     LDS     R16, U_MIN      
+000403 3009                          CPI     R16, 9         
+000404 f021                          BREQ    RUMIN           
+000405 9503                          INC     R16             
+000406 9300 0102                     STS     U_MIN, R16      
+000408 cc93                          RJMP    MAIN_LOOP       
                                  
                                  // AUMENTAR VALOR DE UNIDAD DE MINUTO
                                  RUMIN:
-000401 2700                          CLR     R16             
-000402 9300 0102                     STS     U_MIN, R16      
-000404 9100 0103                     LDS     R16, D_MIN      
-000406 3005                          CPI     R16, 5          
-000407 f021                          BREQ    RDMIN           
-000408 9503                          INC     R16             
-000409 9300 0103                     STS     D_MIN, R16      
-00040b cc8e                          RJMP    MAIN_LOOP       
+000409 2700                          CLR     R16             
+00040a 9300 0102                     STS     U_MIN, R16      
+00040c 9100 0103                     LDS     R16, D_MIN      
+00040e 3005                          CPI     R16, 5          
+00040f f021                          BREQ    RDMIN           
+000410 9503                          INC     R16             
+000411 9300 0103                     STS     D_MIN, R16      
+000413 cc88                          RJMP    MAIN_LOOP       
                                  
                                  // AUMENTAR VALOR DE DECENA DE MINUTO
                                  RDMIN:
-00040c 2700                          CLR     R16             
-00040d 9300 0103                     STS     D_MIN, R16      
-00040f 9100 0105                     LDS     R16, D_HORA     
-000411 3002                          CPI     R16, 2          
-000412 f041                          BREQ    RRAPIDO         
-000413 9100 0104                     LDS     R16, U_HORA     
-000415 3009                          CPI     R16, 9         
-000416 f061                          BREQ    RUHORA          
-000417 9503                          INC     R16             
-000418 9300 0104                     STS     U_HORA, R16     
-00041a cc7f                          RJMP    MAIN_LOOP       
+000414 2700                          CLR     R16             
+000415 9300 0103                     STS     D_MIN, R16      
+000417 9100 0105                     LDS     R16, D_HORA     
+000419 3002                          CPI     R16, 2          
+00041a f041                          BREQ    RRAPIDO         
+00041b 9100 0104                     LDS     R16, U_HORA     
+00041d 3009                          CPI     R16, 9         
+00041e f061                          BREQ    RUHORA          
+00041f 9503                          INC     R16             
+000420 9300 0104                     STS     U_HORA, R16     
+000422 cc79                          RJMP    MAIN_LOOP       
                                  
                                  // Si estamos a final de mes se reinicia el contador en 2 osea 31
                                  RRAPIDO:
-00041b 9100 0104                     LDS     R16, U_HORA     
-00041d 3003                          CPI     R16, 3          
-00041e f069                          BREQ    RDHORA          
-00041f 9503                          INC     R16             
-000420 9300 0104                     STS     U_HORA, R16     
-000422 cc77                          RJMP    MAIN_LOOP       
+000423 9100 0104                     LDS     R16, U_HORA     
+000425 3003                          CPI     R16, 3          
+000426 f468                          BRSH    RDHORA          
+000427 9503                          INC     R16             
+000428 9300 0104                     STS     U_HORA, R16     
+00042a cc71                          RJMP    MAIN_LOOP       
                                  
                                  // AUMENTAR VALOR DE UNIDAD DE HORA
                                  RUHORA:
-000423 2700                          CLR     R16             
-000424 9300 0104                     STS     U_HORA, R16     
-000426 9100 0105                     LDS     R16, D_HORA     
-000428 9503                          INC     R16             
-000429 9300 0105                     STS     D_HORA, R16     
-00042b cc6e                          RJMP    MAIN_LOOP       
+00042b 2700                          CLR     R16             
+00042c 9300 0104                     STS     U_HORA, R16     
+00042e 9100 0105                     LDS     R16, D_HORA     
+000430 9503                          INC     R16             
+000431 9300 0105                     STS     D_HORA, R16     
+000433 cc68                          RJMP    MAIN_LOOP       
                                  
                                  // AUMENTAR VALOR DE DECENA DE HORA
                                  RDHORA:
-00042c 2700                          CLR     R16             
-00042d 9300 0105                     STS     D_HORA, R16 
-00042f 9300 0104                 	STS     U_HORA, R16    
-000431 9100 0109                 	LDS		R16, D_MES
-000433 3001                      	CPI		R16, 1				; REVISAMOS EN QUE MES ESTAMOS 
-000434 f0a9                      	BREQ	FINALES       
-000435 9100 0108                 	LDS		R16, U_MES
-000437 3001                      	CPI		R16, 1
-000438 f0d1                      	BREQ	LARGOS
-000439 3002                      	CPI		R16, 2
-00043a f111                      	BREQ	FEB
-00043b 3003                      	CPI		R16, 3
-00043c f0b1                      	BREQ	LARGOS
-00043d 3004                      	CPI		R16, 4
-00043e f0c9                      	BREQ	CORTOS
-00043f 3005                      	CPI		R16, 5
-000440 f091                      	BREQ	LARGOS
-000441 3006                      	CPI		R16, 6
-000442 f0a9                      	BREQ	CORTOS
-000443 3007                      	CPI		R16, 7
-000444 f071                      	BREQ	LARGOS
-000445 3008                      	CPI		R16, 8
-000446 f061                      	BREQ	LARGOS
-000447 3009                      	CPI		R16, 9
-000448 f079                      	BREQ	CORTOS
-000449 cc50                      	RJMP	MAIN_LOOP
+000434 2700                          CLR     R16             
+000435 9300 0105                     STS     D_HORA, R16 
+000437 9300 0104                 	STS     U_HORA, R16    
+000439 9100 0109                 	LDS		R16, D_MES
+00043b 3001                      	CPI		R16, 1				; REVISAMOS EN QUE MES ESTAMOS 
+00043c f0a9                      	BREQ	FINALES       
+00043d 9100 0108                 	LDS		R16, U_MES
+00043f 3001                      	CPI		R16, 1
+000440 f0d1                      	BREQ	LARGOS
+000441 3002                      	CPI		R16, 2
+000442 f111                      	BREQ	FEB
+000443 3003                      	CPI		R16, 3
+000444 f0b1                      	BREQ	LARGOS
+000445 3004                      	CPI		R16, 4
+000446 f0c9                      	BREQ	CORTOS
+000447 3005                      	CPI		R16, 5
+000448 f091                      	BREQ	LARGOS
+000449 3006                      	CPI		R16, 6
+00044a f0a9                      	BREQ	CORTOS
+00044b 3007                      	CPI		R16, 7
+00044c f071                      	BREQ	LARGOS
+00044d 3008                      	CPI		R16, 8
+00044e f061                      	BREQ	LARGOS
+00044f 3009                      	CPI		R16, 9
+000450 f079                      	BREQ	CORTOS
+000451 cc4a                      	RJMP	MAIN_LOOP
                                  
                                  FINALES:
-00044a 9100 0108                 	LDS		R16, U_MES
-00044c 3000                      	CPI		R16, 0
-00044d f029                      	BREQ	LARGOS
-00044e 3001                      	CPI		R16, 1
-00044f f041                      	BREQ	CORTOS
-000450 3002                      	CPI		R16, 2
-000451 f081                      	BREQ	DICI
-000452 cc47                      	RJMP	MAIN_LOOP
+000452 9100 0108                 	LDS		R16, U_MES
+000454 3000                      	CPI		R16, 0
+000455 f029                      	BREQ	LARGOS
+000456 3001                      	CPI		R16, 1
+000457 f041                      	BREQ	CORTOS
+000458 3002                      	CPI		R16, 2
+000459 f081                      	BREQ	DICI
+00045a cc41                      	RJMP	MAIN_LOOP
                                  
                                  	// FUNCIONAMIENTO PARA MESES LARGOS
                                  LARGOS:
-000453 9100 0107                 	LDS		R16, D_DIA
-000455 3003                      	CPI		R16, 3
-000456 f0b9                      	BREQ	FMESL
-000457 c00e                      	RJMP	COMUN1
+00045b 9100 0107                 	LDS		R16, D_DIA
+00045d 3003                      	CPI		R16, 3
+00045e f0b9                      	BREQ	FMESL
+00045f c00e                      	RJMP	COMUN1
                                  	// FUNCIONAMIENTO PARA MESES CORTOS
                                  CORTOS:
-000458 9100 0107                 	LDS		R16, D_DIA
-00045a 3003                      	CPI		R16, 3
-00045b f0b9                      	BREQ	FMESC
-00045c c009                      	RJMP	COMUN1
+000460 9100 0107                 	LDS		R16, D_DIA
+000462 3003                      	CPI		R16, 3
+000463 f0b9                      	BREQ	FMESC
+000464 c009                      	RJMP	COMUN1
                                  	// FUNCIONAMIENTO PARA FEBRERO
                                  FEB:
-00045d 9100 0107                 	LDS		R16, D_DIA
-00045f 3002                      	CPI		R16, 2
-000460 f0b9                      	BREQ	FMESFEB
-000461 c004                      	RJMP	COMUN1
+000465 9100 0107                 	LDS		R16, D_DIA
+000467 3002                      	CPI		R16, 2
+000468 f0b9                      	BREQ	FMESFEB
+000469 c004                      	RJMP	COMUN1
                                  	// FUNCIONAMIENTO PARA DICIEMBRE (AL AUMENTAR SE TIENE QUE REINICIAR A 1/1)	
                                  DICI:
-000462 9100 0107                 	LDS		R16, D_DIA
-000464 3003                      	CPI		R16, 3
-000465 f0b9                      	BREQ	FMESDIC
+00046a 9100 0107                 	LDS		R16, D_DIA
+00046c 3003                      	CPI		R16, 3
+00046d f0b9                      	BREQ	FMESDIC
                                  COMUN1:
-000466 9100 0106                 	LDS		R16, U_DIA
-000468 3009                      	CPI		R16, 9
-000469 f0d9                      	BREQ	UDIA
-00046a 9503                      	INC		R16
-00046b 9300 0106                 	STS		U_DIA, R16
-00046d cc2c                      	RJMP	MAIN_LOOP
+00046e 9100 0106                 	LDS		R16, U_DIA
+000470 3009                      	CPI		R16, 9
+000471 f0d9                      	BREQ	UDIA
+000472 9503                      	INC		R16
+000473 9300 0106                 	STS		U_DIA, R16
+000475 cc26                      	RJMP	MAIN_LOOP
                                  
                                  FMESL:
-00046e 9100 0106                 	LDS		R16, U_DIA
-000470 3001                      	CPI		R16, 1
-000471 f0e1                      	BREQ	UMESF
-000472 c00e                      	RJMP	COMUN2
+000476 9100 0106                 	LDS		R16, U_DIA
+000478 3001                      	CPI		R16, 1
+000479 f0e1                      	BREQ	UMESF
+00047a c00e                      	RJMP	COMUN2
                                  FMESC:
-000473 9100 0106                 	LDS		R16, U_DIA
-000475 3000                      	CPI		R16, 0
-000476 f0b9                      	BREQ	UMESF
-000477 c009                      	RJMP	COMUN2
+00047b 9100 0106                 	LDS		R16, U_DIA
+00047d 3000                      	CPI		R16, 0
+00047e f0b9                      	BREQ	UMESF
+00047f c009                      	RJMP	COMUN2
                                  FMESFEB:
-000478 9100 0106                 	LDS		R16, U_DIA
-00047a 3008                      	CPI		R16, 8
-00047b f091                      	BREQ	UMESF
-00047c c004                      	RJMP	COMUN2
+000480 9100 0106                 	LDS		R16, U_DIA
+000482 3008                      	CPI		R16, 8
+000483 f091                      	BREQ	UMESF
+000484 c004                      	RJMP	COMUN2
                                  FMESDIC:
-00047d 9100 0106                 	LDS		R16, U_DIA
-00047f 3001                      	CPI		R16, 1
-000480 f0c9                      	BREQ	UMESFD
+000485 9100 0106                 	LDS		R16, U_DIA
+000487 3001                      	CPI		R16, 1
+000488 f0c9                      	BREQ	UMESFD
                                  COMUN2:
-000481 9503                      	INC		R16
-000482 9300 0106                 	STS		U_DIA, R16
-000484 cc15                      	RJMP	MAIN_LOOP
+000489 9503                      	INC		R16
+00048a 9300 0106                 	STS		U_DIA, R16
+00048c cc0f                      	RJMP	MAIN_LOOP
                                  
                                  UDIA:
-000485 2700                      	CLR		R16
-000486 9300 0106                 	STS		U_DIA, R16
-000488 9100 0107                 	LDS		R16, D_DIA
-00048a 9503                      	INC		R16
-00048b 9300 0107                 	STS		D_DIA, R16
-00048d cc0c                      	RJMP	MAIN_LOOP
+00048d 2700                      	CLR		R16
+00048e 9300 0106                 	STS		U_DIA, R16
+000490 9100 0107                 	LDS		R16, D_DIA
+000492 9503                      	INC		R16
+000493 9300 0107                 	STS		D_DIA, R16
+000495 cc06                      	RJMP	MAIN_LOOP
                                  
                                  UMESF:
-00048e e001                      	LDI		R16, 1
-00048f 9300 0106                 	STS		U_DIA, R16
-000491 2700                      	CLR		R16
-000492 9300 0107                 	STS		D_DIA, R16
-000494 9100 0108                 	LDS		R16, U_MES
-000496 9503                      	INC		R16
-000497 9300 0108                 	STS		U_MES, R16
-000499 cc00                      	RJMP	MAIN_LOOP
+000496 e001                      	LDI		R16, 1
+000497 9300 0106                 	STS		U_DIA, R16
+000499 2700                      	CLR		R16
+00049a 9300 0107                 	STS		D_DIA, R16
+00049c 9100 0108                 	LDS		R16, U_MES
+00049e 9503                      	INC		R16
+00049f 9300 0108                 	STS		U_MES, R16
+0004a1 cbfa                      	RJMP	MAIN_LOOP
                                  
                                  UMESFD:
-00049a 2700                      	CLR		R16
-00049b 9300 0109                 	STS		D_MES, R16
-00049d 9300 0107                 	STS		D_DIA, R16
-00049f e001                      	LDI		R16, 1
-0004a0 9300 0108                 	STS		U_MES, R16
-0004a2 9300 0106                 	STS		U_DIA, R16
-0004a4 cbf5                      	RJMP	MAIN_LOOP
+0004a2 2700                      	CLR		R16
+0004a3 9300 0109                 	STS		D_MES, R16
+0004a5 9300 0107                 	STS		D_DIA, R16
+0004a7 e001                      	LDI		R16, 1
+0004a8 9300 0108                 	STS		U_MES, R16
+0004aa 9300 0106                 	STS		U_DIA, R16
+0004ac cbef                      	RJMP	MAIN_LOOP
                                  
                                  // FUNCIONAMIENTO DE INTERRUPCIONES			
                                  // SE ACTIVA CON UN OVERFLOW
                                  TMR0_ISR:
-0004a5 9170 010a                 	LDS		CTIMERS, TIEMPOR
-0004a7 bd76                          OUT     TCNT0, CTIMERS
-0004a8 9523                          INC     TIEMPO
-0004a9 94f3                      	INC		CLEDS
-0004aa 9518                          RETI
+0004ad 9160 010a                 	LDS		CTIMERS, TIEMPOR
+0004af bd66                          OUT     TCNT0, CTIMERS
+0004b0 9523                          INC     TIEMPO
+0004b1 94f3                      	INC		CLEDS
+0004b2 9518                          RETI
                                  
                                  TMR2_ISR:
-0004ab 9553                      	INC		CAMBIADOR
-0004ac 3054                      	CPI		CAMBIADOR, 4
-0004ad f011                      	BREQ	RCAMBIADOR
+0004b3 9553                      	INC		CAMBIADOR
+0004b4 3054                      	CPI		CAMBIADOR, 4
+0004b5 f011                      	BREQ	RCAMBIADOR
                                  SIGUE:
-0004ae 9563                      	INC		CALEDS
-0004af 9518                      	RETI
+0004b6 94a3                      	INC		CALEDS
+0004b7 9518                      	RETI
                                  
                                  RCAMBIADOR:
-0004b0 e050                      	LDI		CAMBIADOR, 0
-0004b1 cffc                      	RJMP	SIGUE
+0004b8 e050                      	LDI		CAMBIADOR, 0
+0004b9 cffc                      	RJMP	SIGUE
                                  
                                  // SE ACTIVA AL PRECIONAR UN BOTON
                                  PCINT_ISR:
-0004b2 9b33                      	SBIS    PINC, PC3   
-0004b3 c007                          RJMP    CAMBIO      
-0004b4 9b32                          SBIS    PINC, PC2   
-0004b5 c030                          RJMP    BOTON3
-0004b6 9b31                      	SBIS    PINC, PC1   
-0004b7 c021                          RJMP    BOTON2      
-0004b8 9b30                          SBIS    PINC, PC0   
-0004b9 c007                          RJMP    BOTON1   
-0004ba 9518                          RETI                
+0004ba 9b33                      	SBIS    PINC, PC3   
+0004bb c007                          RJMP    CAMBIO      
+0004bc 9b32                          SBIS    PINC, PC2   
+0004bd c030                          RJMP    BOTON3
+0004be 9b31                      	SBIS    PINC, PC1   
+0004bf c021                          RJMP    BOTON2      
+0004c0 9b30                          SBIS    PINC, PC0   
+0004c1 c007                          RJMP    BOTON1   
+0004c2 9518                          RETI                
                                  
                                  CAMBIO:
-0004bb 9513                      	INC		MODO				;CAMBIO DE MODO
-0004bc 3015                      	CPI		MODO, 5
-0004bd f009                      	BREQ	REINICIO
-0004be 9518                      	RETI
+0004c3 9513                      	INC		MODO				;CAMBIO DE MODO
+0004c4 3015                      	CPI		MODO, 5
+0004c5 f009                      	BREQ	REINICIO
+0004c6 9518                      	RETI
                                  
                                  REINICIO:
-0004bf 2711                      	CLR		MODO				; Si modo llego a 5 se reincia a 5
-0004c0 9518                      	RETI
+0004c7 2711                      	CLR		MODO				; Si modo llego a 5 se reincia a 5
+0004c8 9518                      	RETI
                                  
                                  BOTON1:							;Funcionamiento para boton 1
-0004c1 3010                      	CPI		MODO, 0				;Se activa para apagar la alarma
-0004c2 f049                      	BREQ	APALA
-0004c3 3011                      	CPI		MODO, 1				;Se activa si estamos en modo config hora
-0004c4 f071                      	BREQ	SUMA
-0004c5 3012                      	CPI		MODO, 2				;Se activa si estamos en modo config hora
-0004c6 f029                      	BREQ	APALA
-0004c7 3013                      	CPI		MODO, 3				;Se activa si estamos en modo config fecha
-0004c8 f051                      	BREQ	SUMA
-0004c9 3014                      	CPI		MODO, 4
-0004ca f041                      	BREQ	SUMA			;Se activa si estamos en modo config alarma
-0004cb 9518                      	RETI
+0004c9 3010                      	CPI		MODO, 0				;Se activa para apagar la alarma
+0004ca f049                      	BREQ	APALA
+0004cb 3011                      	CPI		MODO, 1				;Se activa si estamos en modo config hora
+0004cc f071                      	BREQ	SUMA
+0004cd 3012                      	CPI		MODO, 2				;Se activa si estamos en modo config hora
+0004ce f029                      	BREQ	APALA
+0004cf 3013                      	CPI		MODO, 3				;Se activa si estamos en modo config fecha
+0004d0 f051                      	BREQ	SUMA
+0004d1 3014                      	CPI		MODO, 4
+0004d2 f041                      	BREQ	SUMA			;Se activa si estamos en modo config alarma
+0004d3 9518                      	RETI
                                  
                                  APALA:
-0004cc 2d0d                      	MOV		R16, ALAREN
-0004cd 3001                      	CPI		R16, 1
-0004ce f009                      	BREQ	APAGARALAR
-0004cf 9518                      	RETI
+0004d4 2d0d                      	MOV		R16, ALAREN
+0004d5 3001                      	CPI		R16, 1
+0004d6 f009                      	BREQ	APAGARALAR
+0004d7 9518                      	RETI
                                  
                                  APAGARALAR:
-0004d0 e001                      	LDI		R16, 1
-0004d1 2ec0                      	MOV		STOPALAR, R16
-0004d2 9518                      	RETI
+0004d8 e001                      	LDI		R16, 1
+0004d9 2ec0                      	MOV		STOPALAR, R16
+0004da 9518                      	RETI
                                  
                                  SUMA:
-0004d3 9100 010c                 	LDS		R16, ACTISUM
-0004d5 9503                      	INC		R16
-0004d6 9300 010c                 	STS		ACTISUM, R16
-0004d8 9518                      	RETI
+0004db 9100 010c                 	LDS		R16, ACTISUM
+0004dd 9503                      	INC		R16
+0004de 9300 010c                 	STS		ACTISUM, R16
+0004e0 9518                      	RETI
                                  	 
                                  
                                  BOTON2:
-0004d9 3011                      	CPI		MODO, 1
-0004da f029                      	BREQ	RESTA			;Se activa si estamos en modo config hora
-0004db 3013                      	CPI		MODO, 3
-0004dc f019                      	BREQ	RESTA			;Se activa si estamos en modo config fecha
-0004dd 3014                      	CPI		MODO, 4
-0004de f009                      	BREQ	RESTA			;Se activa si estamos en modo config alarma
-0004df 9518                      	RETI
+0004e1 3011                      	CPI		MODO, 1
+0004e2 f029                      	BREQ	RESTA			;Se activa si estamos en modo config hora
+0004e3 3013                      	CPI		MODO, 3
+0004e4 f019                      	BREQ	RESTA			;Se activa si estamos en modo config fecha
+0004e5 3014                      	CPI		MODO, 4
+0004e6 f009                      	BREQ	RESTA			;Se activa si estamos en modo config alarma
+0004e7 9518                      	RETI
                                  
                                  RESTA:
-0004e0 9100 010d                 	LDS		R16, ACTIRES
-0004e2 9503                      	INC		R16
-0004e3 9300 010d                 	STS		ACTIRES, R16
-0004e5 9518                      	RETI 
+0004e8 9100 010d                 	LDS		R16, ACTIRES
+0004ea 9503                      	INC		R16
+0004eb 9300 010d                 	STS		ACTIRES, R16
+0004ed 9518                      	RETI 
                                  
                                  BOTON3:
-0004e6 3010                      	CPI		MODO, 0				;Se activa si estamos en modo hora
-0004e7 f049                      	BREQ	HABIALAR
-0004e8 3011                      	CPI		MODO, 1
-0004e9 f069                      	BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config hora
-0004ea 3012                      	CPI		MODO, 2				;Se activa si estamos en modo mes
-0004eb f029                      	BREQ	HABIALAR
-0004ec 3013                      	CPI		MODO, 3
-0004ed f049                      	BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config fecha
-0004ee 3014                      	CPI		MODO, 4
-0004ef f039                      	BREQ	CAMBIARDISPLAY			;Se activa si estamos en modo config alarma
-0004f0 9518                      	RETI
+0004ee 3010                      	CPI		MODO, 0				;Se activa si estamos en modo hora
+0004ef f049                      	BREQ	HABIALAR
+0004f0 3011                      	CPI		MODO, 1
+0004f1 f069                      	BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config hora
+0004f2 3012                      	CPI		MODO, 2				;Se activa si estamos en modo mes
+0004f3 f029                      	BREQ	HABIALAR
+0004f4 3013                      	CPI		MODO, 3
+0004f5 f049                      	BREQ	CAMBIARDISPLAY		;Se activa si estamos en modo config fecha
+0004f6 3014                      	CPI		MODO, 4
+0004f7 f039                      	BREQ	CAMBIARDISPLAY			;Se activa si estamos en modo config alarma
+0004f8 9518                      	RETI
                                  
                                  HABIALAR:
-0004f1 95a3                      	INC		HDALARM
-0004f2 30a2                      	CPI		HDALARM, 2
-0004f3 f009                      	BREQ	REALR
-0004f4 9518                      	RETI
+0004f9 9593                      	INC		HDALARM
+0004fa 3092                      	CPI		HDALARM, 2
+0004fb f009                      	BREQ	REALR
+0004fc 9518                      	RETI
                                  REALR:
-0004f5 27aa                      	CLR		HDALARM
-0004f6 9518                      	RETI	
+0004fd 2799                      	CLR		HDALARM
+0004fe 9518                      	RETI	
                                  
                                  CAMBIARDISPLAY:
-0004f7 9100 010b                 	LDS		R16, MDISP
-0004f9 9503                      	INC		R16
-0004fa 9300 010b                 	STS		MDISP, R16
-0004fc 9518                      	RETI
+0004ff 9100 010b                 	LDS		R16, MDISP
+000501 9503                      	INC		R16
+000502 9300 010b                 	STS		MDISP, R16
+000504 9518                      	RETI
                                  
                                  
                                  
@@ -2424,39 +2432,39 @@ counted separately from r26..r31 here.
 
 "ATmega328P" register use summary:
 x  :   0 y  :   0 z  :   2 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
-r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   4 
-r13:   3 r14:   9 r15:   4 r16: 470 r17:  22 r18:   4 r19:   0 r20:  19 
-r21:   8 r22:   7 r23:   2 r24:   9 r25:  76 r26:   8 r27:   0 r28:   0 
+r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   8 r11:  11 r12:   4 
+r13:   4 r14:  11 r15:   4 r16: 460 r17:  22 r18:   4 r19:   0 r20:  19 
+r21:   8 r22:   2 r23:   9 r24:  76 r25:  12 r26:   0 r27:   0 r28:   0 
 r29:   0 r30:   3 r31:   3 
-Registers used: 17 out of 35 (48.6%)
+Registers used: 18 out of 35 (51.4%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   1 add   :   1 adiw  :   0 and   :   0 
 andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
 brcc  :   0 brcs  :   0 break :   0 breq  : 115 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :   1 brpl  :   0 brsh  :   1 brtc  :   0 brts  :   0 brvc  :   0 
+brne  :   1 brpl  :   0 brsh  :   2 brtc  :   0 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   0 call  :  12 cbi   :  32 cbr   :   0 
-clc   :   0 clh   :   0 cli   :   1 cln   :   0 clr   :  27 cls   :   0 
-clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   4 cpc   :   0 
+clc   :   0 clh   :   0 cli   :   1 cln   :   0 clr   :  33 cls   :   0 
+clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   5 cpc   :   0 
 cpi   : 113 cpse  :   0 dec   :  15 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :  36 jmp   :   4 
-ld    :   0 ldd   :   0 ldi   :  58 lds   : 115 lpm   :   4 lsl   :   0 
-lsr   :   0 mov   :  11 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :  35 jmp   :   4 
+ld    :   0 ldd   :   0 ldi   :  58 lds   : 116 lpm   :   4 lsl   :   0 
+lsr   :   0 mov   :  12 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   9 pop   :   0 
 push  :   0 rcall :   0 ret   :  11 reti  :  15 rjmp  : 120 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :  28 sbic  :   0 sbis  :   4 
 sbiw  :   0 sbr   :   0 sbrc  :  54 sbrs  :  52 sec   :   0 seh   :   0 
 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   : 136 
+sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   : 135 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
 Instructions used: 28 out of 113 (24.8%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x0009fa   2492     10   2502   32768   7.6%
+[.cseg] 0x000000 0x000a0a   2508     10   2518   32768   7.7%
 [.dseg] 0x000100 0x000113      0     19     19    2048   0.9%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
-Assembly complete, 0 errors, 1 warnings
+Assembly complete, 0 errors, 0 warnings
